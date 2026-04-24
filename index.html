@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Korea Life RPG</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="menu-container">
+
+  <div class="menu-eyebrow">KOREA LIFE</div>
+  <h1>한국 생활 RPG</h1>
+  <p class="subtitle">외국인을 위한 한국 문화 가이드 · A guide for newcomers</p>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span id="progress-text">0 of 4 missions complete</span>
+      <span id="progress-percent">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <div class="missions">
+
+    <div class="mission-card" onclick="goMission('exchange')">
+      <span class="mission-status" id="status-exchange">미완료</span>
+      <span class="mission-icon">💱</span>
+      <div class="mission-title">공항 환전</div>
+      <div class="mission-desc">Exchange dollars to won at the airport</div>
+    </div>
+
+    <div class="mission-card" onclick="goMission('lostfound')">
+      <span class="mission-status" id="status-lostfound">미완료</span>
+      <span class="mission-icon">📱</span>
+      <div class="mission-title">공항 분실물 센터</div>
+      <div class="mission-desc">Recover your lost phone at Lost & Found</div>
+    </div>
+
+    <div class="mission-card" onclick="goMission('immigration')">
+      <span class="mission-status" id="status-immigration">미완료</span>
+      <span class="mission-icon">🏛️</span>
+      <div class="mission-title">출입국관리사무소</div>
+      <div class="mission-desc">Apply for your Alien Registration Card</div>
+    </div>
+
+    <div class="mission-card" onclick="goMission('convstore')">
+      <span class="mission-status" id="status-convstore">미완료</span>
+      <span class="mission-icon">🏪</span>
+      <div class="mission-title">편의점</div>
+      <div class="mission-desc">Buy and charge a T-money transit card</div>
+    </div>
+
+  </div>
+
+  <p class="footer">미션을 클리어하면 자동으로 이 화면으로 돌아옵니다</p>
+</div>
+
+<script>
+function loadStatus() {
+  const missions = ['exchange', 'lostfound', 'immigration', 'convstore'];
+  let done = 0;
+
+  missions.forEach(m => {
+    const el = document.getElementById('status-' + m);
+    if (localStorage.getItem('cleared_' + m) === 'true') {
+      el.textContent = '클리어';
+      el.classList.add('cleared');
+      done++;
+    }
+  });
+
+  const percent = Math.round((done / missions.length) * 100);
+  document.getElementById('progress-text').textContent = `${done} of ${missions.length} missions complete`;
+  document.getElementById('progress-percent').textContent = `${percent}%`;
+  document.getElementById('progress-fill').style.width = percent + '%';
+}
+
+function goMission(missionId) {
+  window.location.href = `game.html?mission=${missionId}`;
+}
+
+loadStatus();
+</script>
+
+</body>
+</html>

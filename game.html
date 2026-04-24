@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Korea Life RPG — Mission</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<button id="back-btn" onclick="window.location.href='index.html'">← 메뉴로 · Menu</button>
+
+<div id="game">
+  <div id="background"></div>
+
+  <div id="dialogue">
+    <div id="text"></div>
+    <div id="choices"></div>
+    <div id="hint">[Enter] 계속 · Continue</div>
+  </div>
+</div>
+
+<div id="missionComplete">
+  <div class="popup-box">
+    <h2>미션 완료</h2>
+    <p>성공적으로 완료했습니다</p>
+    <p>[Enter]를 눌러 메뉴로 돌아가기</p>
+  </div>
+</div>
+
+<button id="chatbot-toggle" title="AI 도우미 · Helper">💬</button>
+
+<div id="chatbot-panel">
+  <div id="chatbot-header">
+    <span>AI 도우미 · Helper</span>
+    <button id="chatbot-close">×</button>
+  </div>
+  <div id="chatbot-messages"></div>
+  <div id="chatbot-input-wrap">
+    <input type="text" id="chatbot-input" placeholder="질문을 입력하세요 · Ask anything..." />
+    <button id="chatbot-send">보내기</button>
+  </div>
+</div>
+
+<script src="missions/convstore.js"></script>
+<script src="missions/exchange.js"></script>
+<script src="missions/lostfound.js"></script>
+<script src="missions/immigration.js"></script>
+
+<script src="js/game.js"></script>
+<script src="js/config.js"></script>
+<script src="js/chatbot.js"></script>
+
+</body>
+</html>
