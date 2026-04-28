@@ -59,15 +59,21 @@ function parseDialog(text) {
 // ===================================================================
 // Typewriter effect — types text letter by letter
 // Click or Space to skip
+// Bug note: innerText normalizes whitespace on read, collapsing spaces
+// between words when used with +=. textContent does not normalize, so
+// we use textContent throughout. cancelled flag stops stale timeouts
+// that would append characters after a skip.
 // ===================================================================
 function typeText(text, callback) {
-  textEl.innerText = '';
+  textEl.textContent = '';
   let i = 0;
+  let cancelled = false;
   isTyping = true;
 
   function step() {
+    if (cancelled) return;
     if (i < text.length) {
-      textEl.innerText += text[i++];
+      textEl.textContent += text[i++];
       setTimeout(step, 30);
     } else {
       isTyping = false;
@@ -79,7 +85,8 @@ function typeText(text, callback) {
 
   const skip = () => {
     if (isTyping) {
-      textEl.innerText = text;
+      cancelled = true;
+      textEl.textContent = text;
       isTyping = false;
       if (callback) callback();
     }
