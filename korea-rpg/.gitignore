@@ -1,0 +1,9 @@
+# Do NOT upload API keys to GitHub!
+js/config.js
+
+# macOS files
+.DS_Store
+
+# Editor files
+.vscode/
+.idea/

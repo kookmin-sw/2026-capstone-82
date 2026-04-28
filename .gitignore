@@ -1,9 +1,14 @@
-# Do NOT upload API keys to GitHub!
+# API keys
 js/config.js
+korea-rpg/js/config.js
 
 # macOS files
 .DS_Store
+**/.DS_Store
 
 # Editor files
 .vscode/
 .idea/
+
+# Build artifacts
+*.zip

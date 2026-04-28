@@ -1,11 +1,16 @@
 // ===================================================================
 // Korea RPG — AI Chatbot Helper
-// Connects to Claude API (Anthropic) to answer player questions
-// about Korean culture, the current mission, or anything confusing.
+// ===================================================================
+// SETUP:
+//   1. Copy js/config.example.js to js/config.js
+//   2. Add your Claude API key to config.js
+//   3. config.js is in .gitignore — never committed to GitHub
 // ===================================================================
 
-// ⚠️ IMPORTANT: Replace this with YOUR API key from https://console.anthropic.com
-const CLAUDE_API_KEY = 'YOUR_API_KEY_HERE';
+const CLAUDE_API_KEY = (typeof CONFIG !== 'undefined' && CONFIG.CLAUDE_API_KEY)
+  ? CONFIG.CLAUDE_API_KEY
+  : null;
+
 const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
 const API_URL = 'https://api.anthropic.com/v1/messages';
 
@@ -15,12 +20,14 @@ let missionTitle = '';
 
 let toggleBtn, panelEl, closeBtn, messagesEl, inputEl, sendBtn;
 
+// Called by game.js when a mission starts
 window.chatbotSetContext = function(context, title) {
   missionContext = context;
   missionTitle = title;
   chatHistory = [];
 };
 
+// System prompt — tells Claude how to behave
 function buildSystemPrompt() {
   return `You are a friendly helper inside a Korean cultural RPG game. The player is a foreigner (international student) learning how to do everyday tasks in Korea.
 
@@ -48,34 +55,28 @@ FORMATTING RULES:
 If they ask in English, reply in English. If they ask in Korean, reply in Korean.`;
 }
 
-// ===================================================================
-// Simple markdown → HTML converter
-// Handles **bold**, *italic*, `code`, and newlines
-// ===================================================================
+// Simple markdown → HTML converter (handles **bold**, *italic*, `code`)
 function renderMarkdown(text) {
-  // Escape HTML first
   let html = text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 
-  // Bold: **text** or __text__
   html = html.replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
-
-  // Italic: *text* (but not inside ** bold)
   html = html.replace(/(^|[^*])\*([^\*\n]+)\*/g, '$1<em>$2</em>');
-
-  // Inline code: `text`
   html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-
-  // Preserve line breaks (convert to <br>)
   html = html.replace(/\n/g, '<br>');
 
   return html;
 }
 
+// Send a message to Claude API
 async function sendToClaud(userMessage) {
+  if (!CLAUDE_API_KEY) {
+    return '⚠️ API key not configured.\n\nSetup steps:\n1. Copy `js/config.example.js` to `js/config.js`\n2. Paste your Claude API key\n3. Reload the page';
+  }
+
   chatHistory.push({ role: 'user', content: userMessage });
 
   try {
@@ -111,6 +112,7 @@ async function sendToClaud(userMessage) {
   }
 }
 
+// Add a message bubble to the chat UI
 function addMessage(text, type) {
   const msg = document.createElement('div');
   msg.className = 'chat-msg ' + type;
@@ -126,6 +128,7 @@ function addMessage(text, type) {
   return msg;
 }
 
+// Handle Send button click
 async function handleSend() {
   const text = inputEl.value.trim();
   if (!text) return;
@@ -148,6 +151,7 @@ async function handleSend() {
   inputEl.focus();
 }
 
+// Initialize UI on page load
 window.addEventListener('load', () => {
   toggleBtn = document.getElementById('chatbot-toggle');
   panelEl = document.getElementById('chatbot-panel');
