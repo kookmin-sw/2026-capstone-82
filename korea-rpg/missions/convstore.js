@@ -8,6 +8,14 @@ const convstoreMission = {
   title: '편의점 — Convenience Store',
   background: 'images/ConvStoreInside.png',
 
+  vocabulary: [
+    { kr: '편의점', en: 'convenience store', rom: 'pyeon-ui-jeom' },
+    { kr: '교통 카드', en: 'T-money transit card', rom: 'gyo-tong ka-deu' },
+    { kr: '충전', en: 'recharge / top-up', rom: 'chung-jeon' },
+    { kr: '얼마예요?', en: 'How much is it?', rom: 'eol-ma-ye-yo' },
+    { kr: '감사합니다', en: 'Thank you (formal)', rom: 'gam-sa-ham-ni-da' },
+  ],
+
   // Context passed to the AI helper chatbot
   helperContext: `The player is in a Korean convenience store (편의점 / CU).
 Their goal: buy a T-money transportation card (교통카드) and recharge it.

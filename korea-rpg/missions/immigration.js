@@ -8,6 +8,15 @@ const immigrationMission = {
   title: '출입국관리사무소 — Immigration Office',
   background: 'images/Immigration_waiting.png',
 
+  vocabulary: [
+    { kr: '외국인 등록', en: 'alien registration (ARC)', rom: 'oe-guk-in deung-nok' },
+    { kr: '번호표', en: 'number ticket', rom: 'beon-ho-pyo' },
+    { kr: '창구', en: 'service counter / window', rom: 'chang-gu' },
+    { kr: '신청서', en: 'application form', rom: 'sin-cheong-seo' },
+    { kr: '수수료', en: 'fee', rom: 'su-su-ryo' },
+    { kr: '지문', en: 'fingerprint', rom: 'ji-mun' },
+  ],
+
   helperContext: `The player is at a Korean Immigration Office (출입국관리사무소) to apply for an Alien Registration Card (외국인등록증, ARC).
 Foreigners staying in Korea longer than 90 days MUST get an ARC within 90 days of arrival.
 Required documents: passport, visa, 1 passport photo, application form, proof of address, tuition receipt (for students), and fee (~30,000 KRW).

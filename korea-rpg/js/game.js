@@ -227,6 +227,39 @@ function handleChoice(choice) {
 }
 
 // ===================================================================
+// Vocab screen — shown before mission dialog begins
+// ===================================================================
+function showVocabScreen() {
+  const screen = document.getElementById('vocab-screen');
+  document.getElementById('vocab-mission-title').textContent = currentMission.title;
+
+  const list = document.getElementById('vocab-list');
+  list.innerHTML = '';
+  currentMission.vocabulary.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'vocab-item';
+    div.style.animationDelay = (idx * 50) + 'ms';
+    div.innerHTML =
+      `<span class="vocab-kr">${item.kr}</span>` +
+      `<div class="vocab-meanings">` +
+        `<div class="vocab-en">${item.en}</div>` +
+        (item.rom ? `<div class="vocab-rom">${item.rom}</div>` : '') +
+      `</div>`;
+    list.appendChild(div);
+  });
+
+  screen.style.display = 'flex';
+
+  document.getElementById('vocab-start-btn').onclick = () => {
+    screen.style.display = 'none';
+    if (window.chatbotSetContext) {
+      window.chatbotSetContext(currentMission.helperContext, currentMission.title);
+    }
+    renderStep();
+  };
+}
+
+// ===================================================================
 // Mission complete — show popup with confetti
 // ===================================================================
 function showMissionComplete() {
@@ -337,12 +370,14 @@ function startMission(missionId) {
   const hudTitle = document.getElementById('hud-title');
   if (hudTitle) hudTitle.textContent = currentMission.title;
 
-  // Tell chatbot about this mission (for context)
-  if (window.chatbotSetContext) {
-    window.chatbotSetContext(currentMission.helperContext, currentMission.title);
+  if (currentMission.vocabulary && currentMission.vocabulary.length > 0) {
+    showVocabScreen();
+  } else {
+    if (window.chatbotSetContext) {
+      window.chatbotSetContext(currentMission.helperContext, currentMission.title);
+    }
+    renderStep();
   }
-
-  renderStep();
 }
 
 // ===================================================================

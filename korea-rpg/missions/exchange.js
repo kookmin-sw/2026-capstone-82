@@ -8,6 +8,14 @@ const exchangeMission = {
   title: '공항 환전 — Money Exchange',
   background: 'images/Airport.png',
 
+  vocabulary: [
+    { kr: '어서오세요', en: 'Welcome! (common shop greeting)', rom: 'eo-seo-o-se-yo' },
+    { kr: '환전소', en: 'currency exchange counter', rom: 'hwan-jeon-so' },
+    { kr: '환율', en: 'exchange rate', rom: 'hwan-nyul' },
+    { kr: '여권', en: 'passport', rom: 'yeo-gwon' },
+    { kr: '원 (₩)', en: 'Korean won (KRW)', rom: 'won' },
+  ],
+
   helperContext: `The player just arrived at Incheon International Airport.
 Their goal: find the currency exchange counter (환전소) and change US dollars to Korean won (KRW).
 Current exchange rate in the game: 1 USD ≈ 1,380 KRW.

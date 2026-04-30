@@ -8,6 +8,14 @@ const lostfoundMission = {
   title: '분실물 센터 — Lost and Found',
   background: 'images/LostAndFound.png',
 
+  vocabulary: [
+    { kr: '분실물 센터', en: 'lost and found center', rom: 'bun-sil-mul sen-teo' },
+    { kr: '휴대폰', en: 'mobile phone', rom: 'hyu-dae-pon' },
+    { kr: '여권', en: 'passport', rom: 'yeo-gwon' },
+    { kr: '서명', en: 'signature', rom: 'seo-myeong' },
+    { kr: '잃어버렸어요', en: 'I lost (it)', rom: 'il-eo-beo-ryeo-sseo-yo' },
+  ],
+
   helperContext: `The player lost their phone at the airport and must retrieve it from the Lost and Found center (분실물 센터).
 At Korean Lost and Found, you must:
 1. Describe the lost item (model, color, case, distinctive marks)

@@ -27,9 +27,11 @@ All four mission files load first (they define globals like `convstoreMission`),
 - Mission completion is saved as `localStorage.setItem('cleared_<id>', 'true')`.
 
 ### Mission data format (`missions/*.js`)
-Each file exports one `const <name>Mission = { id, title, background, helperContext, steps, completeTitle, completeMessage }`. Steps are a flat object keyed by step name; each step has `{ text, choices[], background? }`. A choice with `next: 'END'` ends the mission.
+Each file exports one `const <name>Mission = { id, title, background, vocabulary, helperContext, steps, completeTitle, completeMessage }`. Steps are a flat object keyed by step name; each step has `{ text, choices[], background? }`. A choice with `next: 'END'` ends the mission.
 
 The `title` field is displayed in the in-game HUD (`#mission-hud` / `#hud-title`). Keep it short (under 30 chars) or it will be clipped on mobile.
+
+The optional `vocabulary` array — `[{ kr, en, rom? }, ...]` — triggers a pre-mission vocab screen before dialog begins. If omitted or empty, the mission starts immediately. Populate it with the same words you mark as `[[...]]` tooltips in step text, plus any other critical terms a newcomer would need.
 
 ### CSS architecture (`style.css`)
 Two distinct visual themes live in one file: Apple-minimal (menu) and dark visual-novel (game). The `/* MENU SCREEN */` and `/* GAME SCREEN */` comment blocks mark the boundary.
