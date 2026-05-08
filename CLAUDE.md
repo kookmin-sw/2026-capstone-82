@@ -29,9 +29,13 @@ All nine mission files load first (they define globals like `convstoreMission`),
 ### Mission data format (`missions/*.js`)
 Each file exports one `const <name>Mission = { id, title, background, vocabulary, helperContext, steps, completeTitle, completeMessage }`. Steps are a flat object keyed by step name; each step has `{ text, choices[], background? }`. A choice with `next: 'END'` ends the mission.
 
-The `title` field is displayed in the in-game HUD (`#mission-hud` / `#hud-title`). Keep it short (under 30 chars) or it will be clipped on mobile.
+- `title` — displayed in HUD (`#hud-title`). Keep under 30 chars or it clips on mobile.
+- `helperContext` — plain-text string passed to `chatbotSetContext`; becomes part of the Claude system prompt. Describe the scenario so the chatbot can give relevant hints.
+- `completeTitle` / `completeMessage` — shown in the mission-complete popup.
 
-The optional `vocabulary` array — `[{ kr, en, rom? }, ...]` — triggers a pre-mission vocab screen before dialog begins. If omitted or empty, the mission starts immediately. Populate it with the same words you mark as `[[...]]` tooltips in step text, plus any other critical terms a newcomer would need.
+The optional `vocabulary` array — `[{ kr, en, rom? }, ...]` — triggers a pre-mission vocab screen before dialog begins. If omitted or empty, the mission starts immediately.
+
+**Vocab tooltips** — after the typewriter finishes, `applyVocabTooltips()` scans the rendered text and wraps every Korean word from `vocabulary` in `<span class="word-tip" data-en="…">`. Clicking the span shows a translation bubble. The scanner uses longest-match-first and a Hangul negative-lookbehind to avoid partial matches (e.g. `원` won't match inside `안내원`). No special markup needed in the step text — just ensure the Korean word appears verbatim in both the step text and the `vocabulary` array.
 
 ### CSS architecture (`style.css`)
 Two distinct visual themes live in one file: Apple-minimal (menu) and dark visual-novel (game). The `/* MENU SCREEN */` and `/* GAME SCREEN */` comment blocks mark the boundary.
@@ -108,3 +112,4 @@ Same checklist as a step-based mission (see "Adding a new mission" above), but:
 - **`chatHistory` cap** — `chatbot.js` trims history to the last 20 messages (`MAX_HISTORY`). Adjust if needed, but keep it bounded to avoid token limit errors.
 - **Cleared state requires both IDs** — `loadStatus()` in `index.html` sets `.cleared` on both `#status-<id>` (the badge) and `#card-<id>` (the card div). If `id="card-<id>"` is missing on a card, the green cleared style won't appear but the badge will still work.
 - **Typewriter uses `textContent`, not `innerText`** — `innerText` normalizes whitespace on read, which collapses spaces between words when using `+=`. All typewriter code must use `textContent`.
+- **Background images are landscape-only** — all `images/*.png` are landscape (~2400×1700). The `#background` CSS uses `background-position: top center` so characters at the top of the scene are not cropped on widescreen fullscreen. Portrait phones still show a horizontal center-slice; the only proper fix is to provide portrait-oriented images or restrict the game to landscape orientation.

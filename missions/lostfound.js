@@ -6,7 +6,7 @@
 const lostfoundMission = {
   id: 'lostfound',
   title: '분실물 센터 — Lost and Found',
-  background: 'images/LostAndFound.png',
+  background: 'images/Airport_cv.png',
 
   helperContext: `The player lost their phone at the airport and must retrieve it from the Lost and Found center (분실물 센터).
 At Korean Lost and Found, you must:
@@ -21,69 +21,137 @@ Staff expect polite speech (존댓말). If the item isn't there, they'll ask you
     { kr: '휴대폰', en: 'mobile phone / smartphone', rom: 'hyudaepon' },
     { kr: '잃어버리다', en: 'to lose (something)', rom: 'ireobŏrida' },
     { kr: '여권', en: 'passport', rom: 'yeogwon' },
-    { kr: '서명', en: 'signature', rom: 'seomyeong' },
+    { kr: '신분증', en: 'ID card', rom: 'sinbunjeung' },
     { kr: '게이트', en: 'airport gate', rom: 'geiteu' },
   ],
 
-  steps: {
-    start: {
-      text: '분실물 센터 직원: 안녕하세요. 무엇을 도와드릴까요?',
-      choices: [
-        { label: '휴대폰을 잃어버렸어요.', next: 'askDetails' },
-        { label: '분실물을 찾으러 왔습니다.', next: 'askDetails' }
-      ]
-    },
+  sceneFn() {
+    const scenes = {};
+    const go = name => { clearChoices(); scenes[name](); };
+    const enterGo = name => waitEnterThen(() => go(name));
 
-    askDetails: {
-      text: '직원: 어디서, 언제 잃어버리셨나요?',
-      choices: [
-        { label: '한 시간 전에 게이트 근처에서요.', next: 'askPhone' },
-        { label: '화장실에 두고 나온 것 같아요.', next: 'askPhone' }
-      ]
-    },
+    let ch1 = null, ch4 = null, ch7 = null, ch8 = null;
 
-    askPhone: {
-      text: '직원: 휴대폰 모델과 색깔을 알려주시겠어요?',
-      choices: [
-        { label: '아이폰 15, 검정색이에요.', next: 'searching' },
-        { label: '갤럭시 S24, 흰색이에요.', next: 'searching' }
-      ]
-    },
+    scenes.start = () => {
+      changeBackground('images/Airport_cv.png');
+      typeText('주인공: 어? 휴대폰이 없네... 어디서 잃어버렸지?', () => {
+        addChoice('공항 직원에게 물어본다.', '1');
+        addChoice('(주변을 둘러본다)', '2');
+        addChoice('(당황한다)', '3');
+        waitForChoice(v => { ch1 = v; go('step2'); });
+      });
+    };
 
-    searching: {
-      text: '직원: 잠시만요, 확인해볼게요. (컴퓨터를 확인한다)',
-      choices: [
-        { label: '(기다린다)', next: 'found' }
-      ]
-    },
+    scenes.step2 = () => {
+      if (ch1 === '1') {
+        typeText('공항 직원: 휴대폰을 잃어버리셨어요? 분실물 센터로 가보세요!', () => {
+          addChoice('분실물 센터가 어디 있나요?', '1');
+          addChoice('감사합니다!', '2');
+          waitForChoice(() => go('step3'));
+        });
+      } else if (ch1 === '2') {
+        typeText('(주변을 살펴본다... 휴대폰이 보이지 않는다)', () => {
+          addChoice('공항 직원에게 도움을 청한다.', '1');
+          addChoice('(계속 찾아본다)', '2');
+          waitForChoice(() => go('step3'));
+        });
+      } else {
+        typeText('주인공: 이럴 수가... 휴대폰이 정말 없다!', () => {
+          addChoice('공항 직원을 찾는다.', '1');
+          addChoice('(침착함을 되찾는다)', '2');
+          waitForChoice(() => go('step3'));
+        });
+      }
+    };
 
-    found: {
-      text: '직원: 아, 찾았습니다! 여권을 보여주시겠어요?',
-      choices: [
-        { label: '(여권을 건넨다)', next: 'sign' }
-      ]
-    },
+    scenes.step3 = () => {
+      typeText('공항 직원: 분실물 센터는 저쪽 안내소 옆입니다. 직진하다가 오른쪽으로 꺾으세요!', () => {
+        addChoice('감사합니다! 가보겠습니다.', '1');
+        addChoice('혹시 휴대폰이 있을 확률이 높나요?', '2');
+        waitForChoice(() => go('step4'));
+      });
+    };
 
-    sign: {
-      text: '직원: 확인되었습니다. 여기 서명해 주세요.',
-      choices: [
-        { label: '(서명한다)', next: 'receive' }
-      ]
-    },
+    scenes.step4 = () => {
+      changeBackground('images/LostAndFound.png');
+      typeText('(분실물 센터에 도착했다)\n분실물 센터 직원: 어서오세요! 뭔가 잃어버리셨어요?', () => {
+        addChoice('네, 휴대폰을 잃어버렸어요.', '1');
+        addChoice('휴대폰을 찾고 있는데요.', '2');
+        addChoice('(휴대폰 사진을 보여준다)', '3');
+        waitForChoice(v => { ch4 = v; go('step5'); });
+      });
+    };
 
-    receive: {
-      text: '직원: 여기 휴대폰입니다. 다음부터는 조심하세요!',
-      choices: [
-        { label: '감사합니다! 정말 다행이에요.', next: 'done' }
-      ]
-    },
+    scenes.step5 = () => {
+      if (ch4 === '3') {
+        typeText('분실물 센터 직원: 아, 이 휴대폰이군요! 잠깐만요.', () => {
+          addChoice('(기다린다)', '1');
+          addChoice('(불안해한다)', '2');
+          waitForChoice(() => go('step6'));
+        });
+      } else {
+        typeText('분실물 센터 직원: 휴대폰이요? 어떤 휴대폰인가요?', () => {
+          addChoice('검은색 아이폰입니다.', '1');
+          addChoice('최신형 삼성 휴대폰입니다.', '2');
+          addChoice('(휴대폰 모델을 설명한다)', '3');
+          waitForChoice(() => go('step6'));
+        });
+      }
+    };
 
-    done: {
-      text: '직원: 안녕히 가세요!',
-      choices: [
-        { label: '[미션 완료] 메뉴로 돌아가기', next: 'END' }
-      ]
-    }
+    scenes.step6 = () => {
+      typeText('분실물 센터 직원: (컴퓨터를 확인한다) 네, 저희가 가지고 있습니다!', () => {
+        addChoice('정말요? 감사합니다!', '1');
+        addChoice('(안도의 한숨을 쉰다)', '2');
+        waitForChoice(() => go('step7'));
+      });
+    };
+
+    scenes.step7 = () => {
+      typeText('분실물 센터 직원: 신분증을 확인해야 합니다.', () => {
+        addChoice('(신분증을 건넨다)', '1');
+        addChoice('신분증이 어디 있지?', '2');
+        waitForChoice(v => { ch7 = v; go('step8'); });
+      });
+    };
+
+    scenes.step8 = () => {
+      if (ch7 === '1') {
+        typeText('분실물 센터 직원: 감사합니다. (신분증을 확인한다) 좋습니다!', () => enterGo('step9'));
+      } else {
+        typeText('분실물 센터 직원: 신분증이 필요합니다. 찾아오실 수 있나요?', () => {
+          addChoice('(가방을 뒤진다) 여기 있습니다!', '1');
+          addChoice('(당황한다)', '2');
+          waitForChoice(v => { ch8 = v; go('step9'); });
+        });
+      }
+    };
+
+    scenes.step9 = () => {
+      if (ch8 === '2') {
+        typeText('분실물 센터 직원: 괜찮습니다. 천천히 찾으세요.', () => {
+          addChoice('(신분증을 찾는다) 여기 있습니다!', '1');
+          addChoice('(다시 가방을 뒤진다)', '2');
+          waitForChoice(() => go('step10'));
+        });
+      } else {
+        typeText('분실물 센터 직원: (뒤에서 휴대폰을 꺼낸다) 여기 있습니다!', () => enterGo('step10'));
+      }
+    };
+
+    scenes.step10 = () => {
+      typeText('주인공: 오! 정말 내 휴대폰이다!', () => enterGo('step11'));
+    };
+
+    scenes.step11 = () => {
+      typeText('분실물 센터 직원: 다행이네요! 앞으로 조심하세요!', () => enterGo('step12'));
+    };
+
+    scenes.step12 = () => {
+      typeText('주인공: 정말 감사합니다! 도움이 많이 됐어요!', showMissionComplete);
+    };
+
+    go('start');
   },
 
   completeTitle: '📱 휴대폰 찾기 완료!',

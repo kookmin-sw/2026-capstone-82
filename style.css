@@ -234,7 +234,7 @@ h1 {
   position: absolute;
   inset: 0;
   background-repeat: no-repeat;
-  background-position: center center;
+  background-position: top center;
   background-size: cover;
   transition: background-image 0.5s ease;
 }
@@ -923,5 +923,13 @@ button:active {
     bottom: 20px;
     right: 20px;
     font-size: 20px;
+  }
+}
+
+/* Portrait phones: landscape images don't fill portrait screens well with cover.
+   Shift focus slightly left of center so characters near edges stay visible. */
+@media (max-width: 640px) and (orientation: portrait) {
+  #background {
+    background-position: 35% top;
   }
 }
