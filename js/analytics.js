@@ -1,6 +1,7 @@
 // User behavior analytics — writes events to Firestore `events` collection
 // Works on both index.html and game.html
-const Analytics = (() => {
+// var (not const) so window.Analytics is defined for cross-script checks
+var Analytics = (() => {
   let _missionId  = null;
   let _missionStart = null;
   let _stepStart  = null;
