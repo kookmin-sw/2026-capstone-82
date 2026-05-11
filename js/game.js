@@ -132,7 +132,7 @@ const mobileCropX = {
 function changeBackground(img) {
   bgEl.style.backgroundImage = `url('${img}')`;
   if (window.matchMedia('(max-width: 640px) and (orientation: portrait)').matches) {
-    bgEl.style.backgroundPosition = (mobileCropX[img] || '50%') + ' top';
+    bgEl.style.backgroundPosition = (mobileCropX[img] || '50%') + ' center';
   } else {
     bgEl.style.backgroundPosition = desktopPos[img] || '';
   }
