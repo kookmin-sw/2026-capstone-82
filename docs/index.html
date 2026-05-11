@@ -265,7 +265,7 @@ nav {
 .m-long { background: rgba(232,25,44,0.15); color: #FF9090; }
 
 /* ─── Tech Stack ─── */
-.tech-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.tech-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 @media (max-width: 768px) { .tech-grid { grid-template-columns: 1fr; } }
 .tech-card {
   background: var(--card); border: 1px solid var(--border);
@@ -281,6 +281,7 @@ nav {
 .ti-front { background: rgba(250,204,21,0.12); }
 .ti-ai    { background: rgba(139,92,246,0.12); }
 .ti-ui    { background: rgba(6,182,212,0.12); }
+.ti-db    { background: rgba(255,149,0,0.12); }
 .tech-name  { font-size: 16px; font-weight: 700; color: #fff; }
 .tech-sub   { font-size: 12px; color: var(--muted); margin-top: 3px; }
 .tech-hr    { height: 1px; background: var(--border); margin: 4px 0 18px; }
@@ -585,7 +586,7 @@ footer {
     <div class="section-center fade-up">
       <div class="section-eyebrow">기술 스택 · Tech Stack</div>
       <h2 class="section-title">사용된 기술</h2>
-      <p class="section-sub">프레임워크 없이, 빌드 없이 — 순수 웹 기술로 구현한 게임 엔진</p>
+      <p class="section-sub">프레임워크 없이, 빌드 없이 — 순수 웹 기술과 클라우드 데이터베이스로 구현한 게임</p>
       <div class="section-line"></div>
     </div>
     <div class="tech-grid fade-up">
@@ -599,45 +600,62 @@ footer {
         </div>
         <div class="tech-hr"></div>
         <ul class="tech-list">
-          <li><span class="tech-check">✓</span>No framework, no bundler, no npm</li>
-          <li><span class="tech-check">✓</span>Typewriter dialogue engine</li>
-          <li><span class="tech-check">✓</span>Scene-based & step-based mission formats</li>
-          <li><span class="tech-check">✓</span>localStorage progress tracking</li>
-          <li><span class="tech-check">✓</span>Vocab tooltip system</li>
+          <li><span class="tech-check">✓</span>프레임워크 없음 · 빌드 없음 · npm 없음</li>
+          <li><span class="tech-check">✓</span>타자기 대화 엔진 (Typewriter engine)</li>
+          <li><span class="tech-check">✓</span>씬 기반 · 스텝 기반 미션 형식 2종</li>
+          <li><span class="tech-check">✓</span>GitHub Actions — 자동 배포 (GitHub Pages)</li>
+          <li><span class="tech-check">✓</span>인게임 단어 툴팁 시스템</li>
         </ul>
       </div>
       <div class="tech-card">
         <div class="tech-header">
           <div class="tech-icon-box ti-ai">🤖</div>
           <div>
-            <div class="tech-name">AI Chatbot</div>
+            <div class="tech-name">AI 챗봇</div>
             <div class="tech-sub">Claude API · Anthropic</div>
           </div>
         </div>
         <div class="tech-hr"></div>
         <ul class="tech-list">
-          <li><span class="tech-check">✓</span>claude-haiku-4-5-20251001 model</li>
-          <li><span class="tech-check">✓</span>Mission-aware system prompt</li>
-          <li><span class="tech-check">✓</span>Direct browser API integration</li>
-          <li><span class="tech-check">✓</span>Per-mission context injection</li>
-          <li><span class="tech-check">✓</span>Korean & English support</li>
+          <li><span class="tech-check">✓</span>claude-haiku-4-5-20251001 모델</li>
+          <li><span class="tech-check">✓</span>미션별 맥락 인식 시스템 프롬프트</li>
+          <li><span class="tech-check">✓</span>브라우저 직접 API 연동</li>
+          <li><span class="tech-check">✓</span>한국어 · 영어 동시 지원</li>
+          <li><span class="tech-check">✓</span>대화 이력 최대 20개 유지</li>
+        </ul>
+      </div>
+      <div class="tech-card">
+        <div class="tech-header">
+          <div class="tech-icon-box ti-db">🔥</div>
+          <div>
+            <div class="tech-name">Database &amp; Analytics</div>
+            <div class="tech-sub">Firebase Firestore · Chart.js</div>
+          </div>
+        </div>
+        <div class="tech-hr"></div>
+        <ul class="tech-list">
+          <li><span class="tech-check">✓</span>사용자 프로필 저장 — 국적 · 나이 · 거주지 · 입국 예정일 · 방문 목적</li>
+          <li><span class="tech-check">✓</span>15가지 행동 이벤트 자동 수집 (미션 시작/완료/포기, 단어 클릭, 챗봇 질문 등)</li>
+          <li><span class="tech-check">✓</span>기기 간 프로필 동기화 (이메일 로그인)</li>
+          <li><span class="tech-check">✓</span>실시간 Analytics 대시보드 (Chart.js)</li>
+          <li><span class="tech-check">✓</span>입국 예정 시기 · 방문 목적 시각화</li>
         </ul>
       </div>
       <div class="tech-card">
         <div class="tech-header">
           <div class="tech-icon-box ti-ui">🎨</div>
           <div>
-            <div class="tech-name">Design & UX</div>
+            <div class="tech-name">Design &amp; UX</div>
             <div class="tech-sub">Google Fonts · Custom CSS</div>
           </div>
         </div>
         <div class="tech-hr"></div>
         <ul class="tech-list">
-          <li><span class="tech-check">✓</span>Inter — UI & English text</li>
-          <li><span class="tech-check">✓</span>Noto Sans KR — Korean text</li>
-          <li><span class="tech-check">✓</span>Portrait-mobile crop system</li>
-          <li><span class="tech-check">✓</span>Dark visual-novel theme</li>
-          <li><span class="tech-check">✓</span>Confetti completion animation</li>
+          <li><span class="tech-check">✓</span>Inter — UI · 영문 텍스트</li>
+          <li><span class="tech-check">✓</span>Noto Sans KR — 한국어 텍스트</li>
+          <li><span class="tech-check">✓</span>세로 모바일 최적 크롭 시스템</li>
+          <li><span class="tech-check">✓</span>다크 비주얼 노벨 테마</li>
+          <li><span class="tech-check">✓</span>미션 완료 시 색종이 애니메이션</li>
         </ul>
       </div>
     </div>
