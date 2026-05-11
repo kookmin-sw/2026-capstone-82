@@ -36,6 +36,15 @@ h1 { font-size: 26px; font-weight: 700; }
 .diff-list .dur { color: #ff9500; font-weight: 600; white-space: nowrap; }
 #loading { text-align: center; padding: 80px; color: #888; font-size: 17px; }
 #error-msg { display: none; text-align: center; padding: 40px; color: #ff3b30; font-size: 15px; }
+.section-header { margin: 36px 0 18px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.section-header h2 { font-size: 20px; font-weight: 700; }
+.section-header .sh-sub { color: #888; font-size: 14px; }
+.chart-card.accent { border-top: 3px solid #007aff; }
+.chart-card.wide { grid-column: 1 / -1; }
+.arrival-empty { color: #bbb; font-size: 14px; padding: 40px 0; text-align: center; }
+.purpose-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; justify-content: center; }
+.purpose-legend .pl-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #555; }
+.purpose-legend .pl-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -61,6 +70,33 @@ h1 { font-size: 26px; font-weight: 700; }
     <div class="stat-card"><div class="num" id="s-chatbot">—</div><div class="label">Chatbot Queries</div></div>
     <div class="stat-card"><div class="num" id="s-vocab">—</div><div class="label">Vocab Taps</div></div>
     <div class="stat-card"><div class="num" id="s-skip">—</div><div class="label">Typewriter Skips</div></div>
+  </div>
+
+  <!-- ── 사용자 현황 · When & Why They Come ─────────────────── -->
+  <div class="section-header">
+    <h2>사용자 현황 · When &amp; Why They Come</h2>
+    <span class="sh-sub">From registration profiles · <span id="s-profiles">—</span> users</span>
+  </div>
+
+  <div class="charts">
+    <div class="chart-card accent">
+      <h2>방한 목적 · Purpose of Visit</h2>
+      <canvas id="ch-purpose"></canvas>
+    </div>
+    <div class="chart-card accent">
+      <h2>현재 한국 거주 여부 · In Korea Now?</h2>
+      <canvas id="ch-inkorea"></canvas>
+    </div>
+    <div class="chart-card accent wide">
+      <h2>입국 예정 시기 · Planned Arrival Timeline</h2>
+      <div id="ch-arrival-wrap"><canvas id="ch-arrival"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── Behavior analytics ─────────────────────────────────── -->
+  <div class="section-header">
+    <h2>행동 분석 · Behavior Analytics</h2>
+    <span class="sh-sub">From in-game events</span>
   </div>
 
   <div class="charts">
@@ -146,15 +182,22 @@ async function loadData() {
   }
   try {
     if (!firebase.apps.length) firebase.initializeApp(CONFIG.FIREBASE);
-    const db   = firebase.firestore();
-    const snap = await db.collection('events').orderBy('timestamp', 'desc').limit(5000).get();
-    const events = snap.docs.map(d => d.data());
+    const db = firebase.firestore();
+
+    // Load events and user profiles in parallel
+    const [eventsSnap, profilesSnap] = await Promise.all([
+      db.collection('events').orderBy('timestamp', 'desc').limit(5000).get(),
+      db.collection('user_profiles').limit(1000).get(),
+    ]);
+    const events   = eventsSnap.docs.map(d => d.data());
+    const profiles = profilesSnap.docs.map(d => d.data());
 
     document.getElementById('loading').style.display = 'none';
     document.getElementById('content').style.display = '';
     document.getElementById('last-updated').textContent =
       '· Last updated ' + new Date().toLocaleTimeString();
 
+    renderProfiles(profiles);
     renderDashboard(events);
   } catch (e) {
     showError('Firestore error: ' + e.message +
@@ -167,6 +210,112 @@ function showError(msg) {
   const el = document.getElementById('error-msg');
   el.style.display = 'block';
   el.textContent = msg;
+}
+
+function renderProfiles(profiles) {
+  document.getElementById('s-profiles').textContent = profiles.length;
+
+  // ── Purpose distribution ──────────────────────────────────
+  const pCount = { work: 0, study: 0, travel: 0 };
+  profiles.forEach(p => { if (p.purpose) pCount[p.purpose] = (pCount[p.purpose] || 0) + 1; });
+
+  new Chart(document.getElementById('ch-purpose'), {
+    type: 'doughnut',
+    data: {
+      labels: ['취업 / 일 💼', '유학 / 공부 📚', '여행 / 관광 ✈️'],
+      datasets: [{
+        data: [pCount.work, pCount.study, pCount.travel],
+        backgroundColor: ['#007aff', '#34c759', '#ff9500'],
+        borderWidth: 0,
+        hoverOffset: 8,
+      }],
+    },
+    options: {
+      responsive: true,
+      cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 16, font: { size: 13 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}명` } },
+      },
+    },
+  });
+
+  // ── Already in Korea vs arriving ─────────────────────────
+  const already  = profiles.filter(p => p.inKorea === true).length;
+  const arriving = profiles.filter(p => p.inKorea !== true && p.plannedArrival).length;
+  const undecided= profiles.filter(p => p.inKorea !== true && !p.plannedArrival).length;
+
+  new Chart(document.getElementById('ch-inkorea'), {
+    type: 'doughnut',
+    data: {
+      labels: ['이미 거주 중 🏠', '방한 예정 ✈️', '미정 📋'],
+      datasets: [{
+        data: [already, arriving, undecided],
+        backgroundColor: ['#34c759', '#007aff', '#c7c7cc'],
+        borderWidth: 0,
+        hoverOffset: 8,
+      }],
+    },
+    options: {
+      responsive: true,
+      cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 16, font: { size: 13 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}명` } },
+      },
+    },
+  });
+
+  // ── Arrival timeline ──────────────────────────────────────
+  const arriving_profiles = profiles.filter(p => p.inKorea !== true && p.plannedArrival);
+  const wrap = document.getElementById('ch-arrival-wrap');
+
+  if (!arriving_profiles.length) {
+    wrap.innerHTML = '<div class="arrival-empty">입국 예정자 데이터가 아직 없습니다</div>';
+    return;
+  }
+
+  const monthCount = {};
+  arriving_profiles.forEach(p => {
+    const m = p.plannedArrival.slice(0, 7); // "2026-03"
+    monthCount[m] = (monthCount[m] || 0) + 1;
+  });
+
+  const months = Object.keys(monthCount).sort();
+  const now = new Date();
+
+  new Chart(document.getElementById('ch-arrival'), {
+    type: 'bar',
+    data: {
+      labels: months.map(m => {
+        const [y, mo] = m.split('-');
+        return `${y}.${mo}`;
+      }),
+      datasets: [{
+        label: '예정 인원 (명)',
+        data: months.map(m => monthCount[m]),
+        backgroundColor: months.map(m => {
+          const d = new Date(m + '-01');
+          return d >= new Date(now.getFullYear(), now.getMonth(), 1)
+            ? 'rgba(0,122,255,0.80)'
+            : 'rgba(52,199,89,0.55)';
+        }),
+        borderRadius: 8,
+        borderSkipped: false,
+      }],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.raw}명 예정` } },
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f2' } },
+      },
+    },
+  });
 }
 
 function renderDashboard(events) {
