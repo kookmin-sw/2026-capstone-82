@@ -50,109 +50,109 @@ h1 { font-size: 26px; font-weight: 700; }
 <body>
 
 <header>
-  <h1>Analytics Dashboard</h1>
-  <a class="back-link" href="index.html">← Back to game</a>
+  <h1>분석 대시보드</h1>
+  <a class="back-link" href="index.html">← 게임으로 돌아가기</a>
 </header>
-<p class="subtitle">Korea Life RPG · Real-time user behavior from Firestore <span id="last-updated"></span></p>
+<p class="subtitle">Korea Life RPG · Firestore 실시간 사용자 데이터 <span id="last-updated"></span></p>
 
-<div id="loading">Loading data from Firestore…</div>
+<div id="loading">데이터 불러오는 중…</div>
 <div id="error-msg"></div>
 
 <div id="content" style="display:none">
 
-  <!-- Summary stats -->
+  <!-- 요약 통계 -->
   <div class="stats-row">
-    <div class="stat-card"><div class="num" id="s-sessions">—</div><div class="label">Sessions</div></div>
-    <div class="stat-card"><div class="num" id="s-users">—</div><div class="label">Unique Users</div></div>
-    <div class="stat-card"><div class="num" id="s-starts">—</div><div class="label">Mission Starts</div></div>
-    <div class="stat-card"><div class="num" id="s-completes">—</div><div class="label">Completions</div></div>
-    <div class="stat-card"><div class="num" id="s-abandon">—</div><div class="label">Abandons</div></div>
-    <div class="stat-card"><div class="num" id="s-chatbot">—</div><div class="label">Chatbot Queries</div></div>
-    <div class="stat-card"><div class="num" id="s-vocab">—</div><div class="label">Vocab Taps</div></div>
-    <div class="stat-card"><div class="num" id="s-skip">—</div><div class="label">Typewriter Skips</div></div>
+    <div class="stat-card"><div class="num" id="s-sessions">—</div><div class="label">세션</div></div>
+    <div class="stat-card"><div class="num" id="s-users">—</div><div class="label">총 사용자</div></div>
+    <div class="stat-card"><div class="num" id="s-starts">—</div><div class="label">미션 시작</div></div>
+    <div class="stat-card"><div class="num" id="s-completes">—</div><div class="label">완료</div></div>
+    <div class="stat-card"><div class="num" id="s-abandon">—</div><div class="label">중도 포기</div></div>
+    <div class="stat-card"><div class="num" id="s-chatbot">—</div><div class="label">챗봇 질문</div></div>
+    <div class="stat-card"><div class="num" id="s-vocab">—</div><div class="label">단어 클릭</div></div>
+    <div class="stat-card"><div class="num" id="s-skip">—</div><div class="label">텍스트 스킵</div></div>
   </div>
 
-  <!-- ── 사용자 현황 · When & Why They Come ─────────────────── -->
+  <!-- ── 사용자 현황 ───────────────────────────────────────── -->
   <div class="section-header">
-    <h2>사용자 현황 · When &amp; Why They Come</h2>
-    <span class="sh-sub">From registration profiles · <span id="s-profiles">—</span> users</span>
+    <h2>사용자 현황 · 언제, 왜 한국에 오나요?</h2>
+    <span class="sh-sub">가입 프로필 기준 · <span id="s-profiles">—</span>명</span>
   </div>
 
   <div class="charts">
     <div class="chart-card accent">
-      <h2>방한 목적 · Purpose of Visit</h2>
+      <h2>방한 목적</h2>
       <canvas id="ch-purpose"></canvas>
     </div>
     <div class="chart-card accent">
-      <h2>현재 한국 거주 여부 · In Korea Now?</h2>
+      <h2>현재 한국 거주 여부</h2>
       <canvas id="ch-inkorea"></canvas>
     </div>
     <div class="chart-card accent wide">
-      <h2>입국 예정 시기 · Planned Arrival Timeline</h2>
+      <h2>입국 예정 시기</h2>
       <div id="ch-arrival-wrap"><canvas id="ch-arrival"></canvas></div>
     </div>
   </div>
 
-  <!-- ── Behavior analytics ─────────────────────────────────── -->
+  <!-- ── 행동 분석 ────────────────────────────────────────── -->
   <div class="section-header">
-    <h2>행동 분석 · Behavior Analytics</h2>
-    <span class="sh-sub">From in-game events</span>
+    <h2>행동 분석 · 어떻게 플레이하나요?</h2>
+    <span class="sh-sub">게임 내 이벤트 기준</span>
   </div>
 
   <div class="charts">
 
     <div class="chart-card">
-      <h2>Mission Starts vs Completions vs Abandons</h2>
+      <h2>미션 시작 · 완료 · 중도 포기</h2>
       <canvas id="ch-missions"></canvas>
     </div>
 
     <div class="chart-card">
-      <h2>Mission Abandon Rate (%)</h2>
+      <h2>미션별 중도 포기율 (%)</h2>
       <canvas id="ch-abandon"></canvas>
     </div>
 
     <div class="chart-card">
-      <h2>User Nationalities</h2>
+      <h2>사용자 국적</h2>
       <canvas id="ch-nationalities"></canvas>
     </div>
 
     <div class="chart-card">
-      <h2>New vs Returning Users · Mobile vs Desktop</h2>
+      <h2>신규 vs 재방문 · 모바일 vs PC</h2>
       <canvas id="ch-user-type"></canvas>
     </div>
 
     <div class="chart-card">
-      <h2>Most Tapped Vocabulary Words (Top 12)</h2>
+      <h2>가장 많이 클릭한 단어 (상위 12개)</h2>
       <canvas id="ch-vocab"></canvas>
     </div>
 
     <div class="chart-card">
-      <h2>Most Revealed Vocab Cards (pre-mission)</h2>
+      <h2>미션 전 단어 카드 오픈 (상위)</h2>
       <canvas id="ch-vocab-cards"></canvas>
     </div>
 
     <div class="chart-card">
-      <h2>Average Mission Duration (minutes)</h2>
+      <h2>미션 평균 소요 시간 (분)</h2>
       <canvas id="ch-duration"></canvas>
     </div>
 
     <div class="chart-card">
-      <h2>Daily Events — Last 14 Days</h2>
+      <h2>최근 14일 일별 이벤트</h2>
       <canvas id="ch-daily"></canvas>
     </div>
 
     <div class="chart-card">
-      <h2>Top Chatbot Questions</h2>
-      <ul class="queries-list" id="queries-list"><li style="color:#bbb">No data yet</li></ul>
+      <h2>챗봇 질문 TOP</h2>
+      <ul class="queries-list" id="queries-list"><li style="color:#bbb">데이터 없음</li></ul>
     </div>
 
     <div class="chart-card">
-      <h2>Hardest Steps (longest decision time)</h2>
-      <ul class="diff-list" id="diff-list"><li style="color:#bbb">No data yet</li></ul>
+      <h2>가장 어려운 선택 (고민 시간 기준)</h2>
+      <ul class="diff-list" id="diff-list"><li style="color:#bbb">데이터 없음</li></ul>
     </div>
 
     <div class="chart-card">
-      <h2>Most Common Choices</h2>
+      <h2>가장 많이 선택된 답변</h2>
       <canvas id="ch-choices"></canvas>
     </div>
 
@@ -177,7 +177,7 @@ const COLORS = ['#007aff','#34c759','#ff9500','#ff3b30','#5856d6',
 
 async function loadData() {
   if (typeof CONFIG === 'undefined' || !CONFIG.FIREBASE) {
-    showError('Firebase not configured. Add CONFIG.FIREBASE to js/config.js.');
+    showError('Firebase 설정이 없습니다. js/config.js 에 CONFIG.FIREBASE 를 추가해주세요.');
     return;
   }
   try {
@@ -195,13 +195,13 @@ async function loadData() {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('content').style.display = '';
     document.getElementById('last-updated').textContent =
-      '· Last updated ' + new Date().toLocaleTimeString();
+      '· 업데이트됨 ' + new Date().toLocaleTimeString();
 
     renderProfiles(profiles);
     renderDashboard(events);
   } catch (e) {
-    showError('Firestore error: ' + e.message +
-      '. Make sure Firestore security rules allow reads (test mode).');
+    showError('Firestore 오류: ' + e.message +
+      '. Firestore 보안 규칙에서 읽기 권한을 허용해 주세요 (테스트 모드).');
   }
 }
 
@@ -351,9 +351,9 @@ function renderDashboard(events) {
     data: {
       labels: MISSION_ORDER.map(m => MISSION_LABELS[m]),
       datasets: [
-        { label: 'Started',   data: MISSION_ORDER.map(m => mStarts[m]),    backgroundColor: 'rgba(0,122,255,0.75)' },
-        { label: 'Completed', data: MISSION_ORDER.map(m => mCompletes[m]), backgroundColor: 'rgba(52,199,89,0.75)'  },
-        { label: 'Abandoned', data: MISSION_ORDER.map(m => mAbandons[m]), backgroundColor: 'rgba(255,59,48,0.75)'   },
+        { label: '시작',      data: MISSION_ORDER.map(m => mStarts[m]),    backgroundColor: 'rgba(0,122,255,0.75)' },
+        { label: '완료',      data: MISSION_ORDER.map(m => mCompletes[m]), backgroundColor: 'rgba(52,199,89,0.75)'  },
+        { label: '중도 포기', data: MISSION_ORDER.map(m => mAbandons[m]), backgroundColor: 'rgba(255,59,48,0.75)'   },
       ],
     },
     options: { responsive: true, plugins: { legend: { position: 'top' } },
@@ -369,7 +369,7 @@ function renderDashboard(events) {
     type: 'bar',
     data: {
       labels: MISSION_ORDER.map(m => MISSION_LABELS[m]),
-      datasets: [{ label: 'Abandon %', data: abandonRates, backgroundColor: abandonRates.map(r => r > 50 ? 'rgba(255,59,48,0.8)' : r > 25 ? 'rgba(255,149,0,0.8)' : 'rgba(52,199,89,0.7)') }],
+      datasets: [{ label: '포기율 %', data: abandonRates, backgroundColor: abandonRates.map(r => r > 50 ? 'rgba(255,59,48,0.8)' : r > 25 ? 'rgba(255,149,0,0.8)' : 'rgba(52,199,89,0.7)') }],
     },
     options: { responsive: true, plugins: { legend: { display: false } },
                scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } } },
@@ -399,10 +399,10 @@ function renderDashboard(events) {
   new Chart(document.getElementById('ch-user-type'), {
     type: 'doughnut',
     data: {
-      labels: ['New Users', 'Returning Users', 'Mobile Sessions', 'Desktop Sessions'],
+      labels: ['신규 사용자', '재방문 사용자', '모바일 세션', 'PC 세션'],
       datasets: [
-        { label: 'User Type',  data: [newUsers, returningUsers, 0, 0],       backgroundColor: ['#007aff','#34c759','transparent','transparent'] },
-        { label: 'Device',     data: [0, 0, mobileCount, desktopCount],      backgroundColor: ['transparent','transparent','#5856d6','#ff9500'] },
+        { label: '사용자 유형', data: [newUsers, returningUsers, 0, 0],       backgroundColor: ['#007aff','#34c759','transparent','transparent'] },
+        { label: '기기',        data: [0, 0, mobileCount, desktopCount],      backgroundColor: ['transparent','transparent','#5856d6','#ff9500'] },
       ],
     },
     options: { responsive: true, plugins: { legend: { position: 'right' } } },
@@ -418,7 +418,7 @@ function renderDashboard(events) {
     type: 'bar',
     data: {
       labels: topWords.map(([w]) => w),
-      datasets: [{ label: 'Taps', data: topWords.map(([,c]) => c), backgroundColor: 'rgba(88,86,214,0.75)' }],
+      datasets: [{ label: '클릭', data: topWords.map(([,c]) => c), backgroundColor: 'rgba(88,86,214,0.75)' }],
     },
     options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
                scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } },
@@ -434,7 +434,7 @@ function renderDashboard(events) {
     type: 'bar',
     data: {
       labels: topCards.map(([w]) => w),
-      datasets: [{ label: 'Reveals', data: topCards.map(([,c]) => c), backgroundColor: 'rgba(175,82,222,0.75)' }],
+      datasets: [{ label: '카드 오픈', data: topCards.map(([,c]) => c), backgroundColor: 'rgba(175,82,222,0.75)' }],
     },
     options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
                scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } },
@@ -453,7 +453,7 @@ function renderDashboard(events) {
     type: 'bar',
     data: {
       labels: MISSION_ORDER.map(m => MISSION_LABELS[m]),
-      datasets: [{ label: 'Avg min', data: avgDurs, backgroundColor: 'rgba(255,149,0,0.75)' }],
+      datasets: [{ label: '평균 분', data: avgDurs, backgroundColor: 'rgba(255,149,0,0.75)' }],
     },
     options: { responsive: true, plugins: { legend: { display: false } },
                scales: { y: { beginAtZero: true } } },
@@ -477,7 +477,7 @@ function renderDashboard(events) {
     data: {
       labels: days.map(d => d.slice(5)),
       datasets: [{
-        label: 'Events', data: days.map(d => dayCounts[d]),
+        label: '이벤트', data: days.map(d => dayCounts[d]),
         borderColor: '#007aff', backgroundColor: 'rgba(0,122,255,0.1)',
         fill: true, tension: 0.35, pointRadius: 4,
       }],
@@ -496,7 +496,7 @@ function renderDashboard(events) {
   const qList = document.getElementById('queries-list');
   qList.innerHTML = '';
   if (!topQ.length) {
-    qList.innerHTML = '<li style="color:#bbb">No chatbot queries yet</li>';
+    qList.innerHTML = '<li style="color:#bbb">챗봇 질문 데이터 없음</li>';
   } else {
     topQ.forEach(([q, cnt]) => {
       const li = document.createElement('li');
@@ -518,7 +518,7 @@ function renderDashboard(events) {
   const dList = document.getElementById('diff-list');
   dList.innerHTML = '';
   if (!hardSteps.length) {
-    dList.innerHTML = '<li style="color:#bbb">No step data yet</li>';
+    dList.innerHTML = '<li style="color:#bbb">데이터 없음</li>';
   } else {
     hardSteps.forEach(({ key, avg }) => {
       const [mId, stepKey] = key.split('::');
@@ -540,7 +540,7 @@ function renderDashboard(events) {
     type: 'bar',
     data: {
       labels: topChoices.map(([l]) => l.length > 28 ? l.slice(0,28)+'…' : l),
-      datasets: [{ label: 'Times chosen', data: topChoices.map(([,c]) => c), backgroundColor: 'rgba(255,45,85,0.7)' }],
+      datasets: [{ label: '선택 횟수', data: topChoices.map(([,c]) => c), backgroundColor: 'rgba(255,45,85,0.7)' }],
     },
     options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
                scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } },
