@@ -18,6 +18,11 @@ When boarding, always let passengers exit first before getting on.`,
   ],
   completeTitle: '🚇 서울역 도착!',
   completeMessage: '지하철 에티켓을 배웠습니다!',
+  images: [
+    'images/subway_entrance.png', 'images/subway_card.png', 'images/subway_card_friend.png',
+    'images/subway_platform.png', 'images/subway_inside_00.png', 'images/subway_inside_01.png',
+    'images/subway_arrive.png',
+  ],
   sceneFn() {
     const scenes = {};
     const go = name => { clearChoices(); scenes[name](); };

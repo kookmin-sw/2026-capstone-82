@@ -25,6 +25,8 @@ Staff expect polite speech (존댓말). If the item isn't there, they'll ask you
     { kr: '게이트', en: 'airport gate', rom: 'geiteu' },
   ],
 
+  images: ['images/Airport_cv.png', 'images/LostAndFound.png'],
+
   sceneFn() {
     const scenes = {};
     const go = name => { clearChoices(); scenes[name](); };

@@ -24,6 +24,8 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     { kr: '안내원', en: 'information staff / guide', rom: 'annaewon' },
   ],
 
+  images: ['images/Airport_cv.png', 'images/MoneyExchange.png'],
+
   sceneFn() {
     const scenes = {};
     const go = name => { clearChoices(); scenes[name](); };

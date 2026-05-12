@@ -21,6 +21,7 @@ Key rules:
 - An English medical certificate (영문 진단서) can be requested separately for travel insurance claims.`,
   completeTitle: '진료 완료! 🏥',
   completeMessage: '병원 진료와 처방전을 성공적으로 받았습니다!',
+  images: ['images/hospital_lobby.png', 'images/hospital_waiting.png', 'images/hospital_doctor.png'],
   sceneFn() {
     const scenes = {};
     const go = name => { clearChoices(); scenes[name](); };

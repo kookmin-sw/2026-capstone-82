@@ -415,6 +415,27 @@ function beginMission() {
 }
 
 // ===================================================================
+// Image preloading — kicks off before vocab screen so images are
+// cached by the time the first scene renders
+// ===================================================================
+function preloadMissionImages(mission) {
+  let urls = [];
+  if (mission.images && mission.images.length) {
+    urls = mission.images;
+  } else if (mission.steps) {
+    const seen = new Set();
+    if (mission.background) seen.add(mission.background);
+    Object.values(mission.steps).forEach(step => {
+      if (step.background) seen.add(step.background);
+    });
+    urls = [...seen];
+  } else if (mission.background) {
+    urls = [mission.background];
+  }
+  urls.forEach(url => { const img = new Image(); img.src = url; });
+}
+
+// ===================================================================
 // Start mission
 // ===================================================================
 function startMission(missionId) {
@@ -425,6 +446,7 @@ function startMission(missionId) {
     return;
   }
 
+  preloadMissionImages(currentMission);
   if (window.Analytics) Analytics.missionStart(missionId);
   currentStepKey = 'start';
   missionDone = false;

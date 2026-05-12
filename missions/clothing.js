@@ -22,6 +22,7 @@ When refunding, any Tax Refund receipt for that purchase becomes void and must b
   ],
   completeTitle: '👗 환불/교환 완료!',
   completeMessage: '옷 가게에서 환불/교환을 성공적으로 처리했습니다!',
+  images: ['images/clothing_store.png', 'images/clothing_counter.png'],
   sceneFn() {
     const scenes = {};
     const go = name => { clearChoices(); scenes[name](); };

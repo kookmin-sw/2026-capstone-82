@@ -19,6 +19,7 @@ Two consent documents to sign: 개인정보 제공 동의서 (privacy consent) a
   ],
   completeTitle: '📱 유심 개통 완료!',
   completeMessage: '한국 휴대폰 번호가 생겼습니다!',
+  images: ['images/telecom_arrive.png', 'images/telecom_shop.png', 'images/telecom_counter.png'],
   sceneFn() {
     const scenes = {};
     const go = name => { clearChoices(); scenes[name](); };

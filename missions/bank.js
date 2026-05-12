@@ -22,6 +22,7 @@ Debit card (체크카드) requires ARC — passport only is not enough.`,
   ],
   completeTitle: '🏦 통장 개설 완료!',
   completeMessage: '은행 통장이 성공적으로 개설되었습니다!',
+  images: ['images/bank_informationdesk.png', 'images/bank_waiting.png', 'images/bank_counter.png'],
   sceneFn() {
     const scenes = {};
     const go = name => { clearChoices(); scenes[name](); };

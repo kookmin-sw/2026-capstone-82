@@ -17,6 +17,7 @@ Korea's three-category waste system:
 Trash must be put out at designated times (usually 7 pm–midnight) and locations. Violations = 과태료 (fines).`,
   completeTitle: '봉투 구매 완료! 🗑️',
   completeMessage: '올바른 쓰레기 봉투를 구매했습니다!',
+  images: ['images/ConvStoreInside.png'],
   sceneFn() {
     const scenes = {};
     const go = name => { clearChoices(); scenes[name](); };

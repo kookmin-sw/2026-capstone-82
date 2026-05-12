@@ -27,6 +27,8 @@ Fee is 60,000 KRW cash only. Card arrives in 3–4 weeks by mail or in-person pi
     { kr: '체류 자격', en: 'residence status / visa category', rom: 'cheryu jagyeok' },
   ],
 
+  images: ['images/Information_desk.png', 'images/Immigration_waiting.png', 'images/Immigration_RegDesk.png'],
+
   sceneFn() {
     const scenes = {};
     const go = name => { clearChoices(); scenes[name](); };

@@ -24,6 +24,7 @@ Important post-move-in steps:
   ],
   completeTitle: '🏠 계약 완료!',
   completeMessage: '새로운 집을 성공적으로 구했습니다!',
+  images: ['images/real_estate.png', 'images/real_estate_office.png', 'images/room_visit_A.png', 'images/room_visit_B.png'],
   sceneFn() {
     const scenes = {};
     const go = name => { clearChoices(); scenes[name](); };

@@ -20,6 +20,7 @@ Key dosage terms: 식후 30분 (30 min after meals), 하루 3번 (3 times a day)
 알레르기 = allergy — always check before dispensing. If buying OTC, see a doctor if symptoms persist 3+ days.`,
   completeTitle: '약 구매 완료! 💊',
   completeMessage: '약국에서 약을 성공적으로 받았습니다!',
+  images: ['images/pharmacy.png', 'images/pharmacy_counter.png'],
   sceneFn() {
     const scenes = {};
     const go = name => { clearChoices(); scenes[name](); };
