@@ -165,6 +165,11 @@ window.addEventListener('load', () => {
   if (!toggleBtn) return;
 
   toggleBtn.onclick = () => {
+    // Main menu: require login before opening chatbot
+    if (typeof getUserProfile === 'function' && !getUserProfile()) {
+      if (typeof openProfileModal === 'function') openProfileModal(true);
+      return;
+    }
     panelEl.classList.toggle('open');
     if (panelEl.classList.contains('open')) {
       if (window.Analytics) Analytics.chatbotOpen();

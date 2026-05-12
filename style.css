@@ -1257,6 +1257,10 @@ button:active {
   cursor: pointer;
   transition: background 0.14s ease;
   white-space: nowrap;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .logout-cancel-btn {
   background: var(--bg);
