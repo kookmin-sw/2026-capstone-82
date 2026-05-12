@@ -87,6 +87,10 @@ h1 { font-size: 26px; font-weight: 700; }
       <h2>현재 한국 거주 여부</h2>
       <canvas id="ch-inkorea"></canvas>
     </div>
+    <div class="chart-card accent">
+      <h2>성별 · Gender</h2>
+      <canvas id="ch-gender"></canvas>
+    </div>
     <div class="chart-card accent wide">
       <h2>입국 예정 시기</h2>
       <div id="ch-arrival-wrap"><canvas id="ch-arrival"></canvas></div>
@@ -252,6 +256,31 @@ function renderProfiles(profiles) {
       datasets: [{
         data: [already, arriving, undecided],
         backgroundColor: ['#34c759', '#007aff', '#c7c7cc'],
+        borderWidth: 0,
+        hoverOffset: 8,
+      }],
+    },
+    options: {
+      responsive: true,
+      cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 16, font: { size: 13 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}명` } },
+      },
+    },
+  });
+
+  // ── Gender distribution ───────────────────────────────────
+  const gCount = { male: 0, female: 0 };
+  profiles.forEach(p => { if (p.gender) gCount[p.gender] = (gCount[p.gender] || 0) + 1; });
+
+  new Chart(document.getElementById('ch-gender'), {
+    type: 'doughnut',
+    data: {
+      labels: ['👨 남성 · Male', '👩 여성 · Female'],
+      datasets: [{
+        data: [gCount.male, gCount.female],
+        backgroundColor: ['#5856d6', '#ff2d55'],
         borderWidth: 0,
         hoverOffset: 8,
       }],
