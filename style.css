@@ -1151,8 +1151,8 @@ button:active {
 #logout-confirm-panel {
   background: var(--surface);
   border-radius: 18px;
-  padding: 28px 24px 22px;
-  width: 290px;
+  padding: 28px 28px 24px;
+  width: 340px;
   position: relative;
   text-align: center;
   box-shadow: 0 12px 40px rgba(0,0,0,0.18);
@@ -1198,12 +1198,13 @@ button:active {
 .logout-cancel-btn,
 .logout-ok-btn {
   flex: 1;
-  padding: 10px 0;
+  padding: 11px 8px;
   border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.14s ease;
+  white-space: nowrap;
 }
 .logout-cancel-btn {
   background: var(--bg);
