@@ -24,9 +24,10 @@ var Analytics = (() => {
     DB.logEvent(Object.assign({
       sessionId:   _sessionId,
       userId:      userId(p),      // URL-safe base64 hash of email — not reversible in UI
-      nationality: p ? p.nationality : null,
-      purpose:     p ? p.purpose     : null,
-      gender:      p ? p.gender      : null,
+      nationality: p ? p.nationality         : null,
+      purpose:     p ? p.purpose             : null,
+      gender:      p ? p.gender              : null,
+      inKorea:     p ? (p.inKorea ?? null)   : null,
       missionId:   _missionId,
       eventType,
       timestamp:   new Date().toISOString(),
