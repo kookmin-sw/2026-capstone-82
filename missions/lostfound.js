@@ -6,7 +6,7 @@
 const lostfoundMission = {
   id: 'lostfound',
   title: '분실물 센터 — Lost and Found',
-  background: 'images/Airport_cv.png',
+  background: 'images/Airport_cv.webp',
 
   helperContext: `The player lost their phone at the airport and must retrieve it from the Lost and Found center (분실물 센터).
 At Korean Lost and Found, you must:
@@ -25,7 +25,7 @@ Staff expect polite speech (존댓말). If the item isn't there, they'll ask you
     { kr: '게이트', en: 'airport gate', rom: 'geiteu' },
   ],
 
-  images: ['images/Airport_cv.png', 'images/LostAndFound.png'],
+  images: ['images/Airport_cv.webp', 'images/LostAndFound.webp'],
 
   sceneFn() {
     const scenes = {};
@@ -35,7 +35,7 @@ Staff expect polite speech (존댓말). If the item isn't there, they'll ask you
     let ch1 = null, ch4 = null, ch7 = null, ch8 = null;
 
     scenes.start = () => {
-      changeBackground('images/Airport_cv.png');
+      changeBackground('images/Airport_cv.webp');
       typeText('주인공: 어? 휴대폰이 없네... 어디서 잃어버렸지?', () => {
         addChoice('공항 직원에게 물어본다.', '1');
         addChoice('(주변을 둘러본다)', '2');
@@ -92,7 +92,7 @@ Staff expect polite speech (존댓말). If the item isn't there, they'll ask you
     };
 
     scenes.step4 = () => {
-      changeBackground('images/LostAndFound.png');
+      changeBackground('images/LostAndFound.webp');
       typeText('(분실물 센터에 도착했다)\n분실물 센터 직원: 어서오세요! 뭔가 잃어버리셨어요?', () => {
         addChoice('네, 휴대폰을 잃어버렸어요.', '1');
         addChoice('휴대폰을 찾고 있는데요.', '2');

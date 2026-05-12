@@ -6,7 +6,7 @@
 const exchangeMission = {
   id: 'exchange',
   title: '공항 환전 — Money Exchange',
-  background: 'images/Airport_cv.png',
+  background: 'images/Airport_cv.webp',
 
   helperContext: `The player just arrived at Incheon International Airport.
 Their goal: find the currency exchange counter (환전소) and change US dollars to Korean won (KRW).
@@ -24,7 +24,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     { kr: '안내원', en: 'information staff / guide', rom: 'annaewon' },
   ],
 
-  images: ['images/Airport_cv.png', 'images/MoneyExchange.png'],
+  images: ['images/Airport_cv.webp', 'images/MoneyExchange.webp'],
 
   sceneFn() {
     const scenes = {};
@@ -34,7 +34,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     let ch1 = null, ch4 = null, ch5 = null, ch7 = null;
 
     scenes.start = () => {
-      changeBackground('images/Airport_cv.png');
+      changeBackground('images/Airport_cv.webp');
       typeText('공항 안내원: 어서오세요! 한국에 오신 것을 환영합니다!', () => {
         addChoice('감사합니다! 환전소를 찾고 있어요.', '1');
         addChoice('(고개를 끄덕인다)', '2');
@@ -74,7 +74,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     };
 
     scenes.step4 = () => {
-      changeBackground('images/MoneyExchange.png');
+      changeBackground('images/MoneyExchange.webp');
       typeText('(환전소에 도착했다)\n환전소 직원: 어서오세요! 무엇을 도와드릴까요?', () => {
         addChoice('달러를 원으로 환전해 주세요.', '1');
         addChoice('환율이 어떻게 되나요?', '2');

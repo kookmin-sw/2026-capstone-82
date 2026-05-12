@@ -6,7 +6,7 @@
 const immigrationMission = {
   id: 'immigration',
   title: '출입국관리사무소 — Immigration Office',
-  background: 'images/Information_desk.png',
+  background: 'images/Information_desk.webp',
 
   helperContext: `The player is at a Korean Immigration Office (출입국관리사무소) to apply for an Alien Registration Card (외국인등록증, ARC).
 Foreigners staying in Korea longer than 90 days MUST get an ARC within 90 days of arrival.
@@ -27,7 +27,7 @@ Fee is 60,000 KRW cash only. Card arrives in 3–4 weeks by mail or in-person pi
     { kr: '체류 자격', en: 'residence status / visa category', rom: 'cheryu jagyeok' },
   ],
 
-  images: ['images/Information_desk.png', 'images/Immigration_waiting.png', 'images/Immigration_RegDesk.png'],
+  images: ['images/Information_desk.webp', 'images/Immigration_waiting.webp', 'images/Immigration_RegDesk.webp'],
 
   sceneFn() {
     const scenes = {};
@@ -42,7 +42,7 @@ Fee is 60,000 KRW cash only. Card arrives in 3–4 weeks by mail or in-person pi
     // ================================================================
 
     scenes.start = () => {
-      changeBackground('images/Information_desk.png');
+      changeBackground('images/Information_desk.webp');
       typeText('주인공: 출입국관리사무소에 도착했다!\n안내 데스크에 가보자.', () => enterGo('step2'));
     };
 
@@ -104,7 +104,7 @@ Fee is 60,000 KRW cash only. Card arrives in 3–4 weeks by mail or in-person pi
     // ================================================================
 
     scenes.step7 = () => {
-      changeBackground('images/Immigration_waiting.png');
+      changeBackground('images/Immigration_waiting.webp');
       typeText('안내원: 여기 대기표입니다. 🎫\n번호가 호출되면 창구로 가세요!', () => {
         addChoice('감사합니다! (대기표를 받는다)', '1');
         addChoice('(대기표를 받으며 고개를 끄덕인다)', '2');
@@ -140,7 +140,7 @@ Fee is 60,000 KRW cash only. Card arrives in 3–4 weeks by mail or in-person pi
     // ================================================================
 
     scenes.step11 = () => {
-      changeBackground('images/Immigration_RegDesk.png');
+      changeBackground('images/Immigration_RegDesk.webp');
       typeText('담당 직원: 안녕하세요. 외국인 등록 신청이시죠?\n서류를 제출해 주세요.', () => {
         addChoice('(서류를 건넨다)', '1');
         addChoice('네, 여기 있습니다!', '2');

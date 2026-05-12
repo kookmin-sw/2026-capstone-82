@@ -6,7 +6,7 @@
 const convstoreMission = {
   id: 'convstore',
   title: '편의점 — Convenience Store',
-  background: 'images/ConvStoreInside.png',
+  background: 'images/ConvStoreInside.webp',
 
   // Context passed to the AI helper chatbot
   helperContext: `The player is in a Korean convenience store (편의점 / CU).
