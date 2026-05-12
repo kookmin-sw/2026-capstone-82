@@ -776,6 +776,7 @@ button:active {
   background: var(--surface);
   border-radius: var(--radius-lg);
   padding: 36px 40px 32px;
+  position: relative;
   width: 100%;
   max-width: 520px;
   max-height: 92vh;
@@ -785,6 +786,26 @@ button:active {
   display: flex;
   flex-direction: column;
   gap: 0;
+}
+
+#profile-panel-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  width: auto;
+  padding: 4px 7px;
+  border-radius: var(--radius-sm);
+  transition: background 0.12s ease, color 0.12s ease;
+}
+#profile-panel-close:hover {
+  background: var(--bg);
+  color: var(--text);
 }
 
 .profile-eyebrow {

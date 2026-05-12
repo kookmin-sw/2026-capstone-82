@@ -165,6 +165,7 @@
 <!-- User profile modal: two views — login (email-only) and register (full form) -->
 <div id="profile-overlay">
   <div id="profile-panel">
+    <button id="profile-panel-close" onclick="closeProfileModal()" title="닫기">×</button>
     <div class="profile-eyebrow">KOREA LIFE RPG</div>
 
     <!-- LOGIN VIEW: shown first when no local profile saved -->
@@ -698,6 +699,11 @@ function showRegisterView(prefilledEmail) {
   document.getElementById('register-view').style.display = '';
   if (prefilledEmail) document.getElementById('f-email').value = prefilledEmail;
   unlockIdentityFields();
+}
+
+function closeProfileModal() {
+  document.getElementById('profile-overlay').classList.remove('active');
+  pendingMissionId = null;
 }
 
 function openProfileModal(isFirstVisit) {
