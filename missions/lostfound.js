@@ -58,16 +58,33 @@ Staff expect polite speech (존댓말). If the item isn't there, they'll ask you
       } else {
         typeText('주인공: 이럴 수가... 휴대폰이 정말 없다!', () => {
           addChoice('공항 직원을 찾는다.', '1');
-          addChoice('(침착함을 되찾는다)', '2');
-          waitForChoice(() => go('step3'));
+          waitForChoice(() => go('step2_ask'));
         });
       }
+    };
+
+    scenes.step2_ask = () => {
+      typeText('공항 직원: 안녕하세요! 무슨 일이세요? 도와드릴까요?', () => {
+        addChoice('휴대폰을 잃어버렸어요!', '1');
+        addChoice('분실물 센터가 어디 있나요?', '2');
+        waitForChoice(() => go('step3'));
+      });
     };
 
     scenes.step3 = () => {
       typeText('공항 직원: 분실물 센터는 저쪽 안내소 옆입니다. 직진하다가 오른쪽으로 꺾으세요!', () => {
         addChoice('감사합니다! 가보겠습니다.', '1');
         addChoice('혹시 휴대폰이 있을 확률이 높나요?', '2');
+        waitForChoice(v => {
+          if (v === '2') go('step3_chance');
+          else go('step4');
+        });
+      });
+    };
+
+    scenes.step3_chance = () => {
+      typeText('공항 직원: 공항에서 분실된 물건은 대부분 분실물 센터에 접수돼요.\n한번 가보시면 아마 있을 거예요!', () => {
+        addChoice('알겠습니다! 가볼게요.', '1');
         waitForChoice(() => go('step4'));
       });
     };
@@ -131,12 +148,15 @@ Staff expect polite speech (존댓말). If the item isn't there, they'll ask you
       if (ch8 === '2') {
         typeText('분실물 센터 직원: 괜찮습니다. 천천히 찾으세요.', () => {
           addChoice('(신분증을 찾는다) 여기 있습니다!', '1');
-          addChoice('(다시 가방을 뒤진다)', '2');
-          waitForChoice(() => go('step10'));
+          waitForChoice(() => go('step9_verify'));
         });
       } else {
         typeText('분실물 센터 직원: (뒤에서 휴대폰을 꺼낸다) 여기 있습니다!', () => enterGo('step10'));
       }
+    };
+
+    scenes.step9_verify = () => {
+      typeText('분실물 센터 직원: 감사합니다. (신분증을 확인한다)\n확인 완료! ✅\n\n(뒤에서 휴대폰을 꺼낸다) 여기 있습니다!', () => enterGo('step10'));
     };
 
     scenes.step10 = () => {
