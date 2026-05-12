@@ -31,6 +31,50 @@ let missionDone = false;
 let enterCallback = null;
 let choiceCallback = null;
 
+// ===================================================================
+// Fixed-position vocab tooltip (escapes all overflow clipping)
+// ===================================================================
+let vocabTooltipEl = null;
+
+function getVocabTooltip() {
+  if (!vocabTooltipEl) {
+    vocabTooltipEl = document.createElement('div');
+    vocabTooltipEl.id = 'vocab-tooltip';
+    document.body.appendChild(vocabTooltipEl);
+  }
+  return vocabTooltipEl;
+}
+
+function showVocabTooltip(tipSpan) {
+  const tt = getVocabTooltip();
+  tt.textContent = tipSpan.dataset.en;
+  tt.style.visibility = 'hidden';
+  tt.style.display = 'block';
+
+  const rect    = tipSpan.getBoundingClientRect();
+  const ttW     = tt.offsetWidth;
+  const ttH     = tt.offsetHeight;
+  const margin  = 8;
+
+  let top  = rect.top - ttH - margin;
+  let left = rect.left + rect.width / 2 - ttW / 2;
+
+  if (top < margin) top = rect.bottom + margin;
+  left = Math.max(margin, Math.min(left, window.innerWidth - ttW - margin));
+
+  tt.style.top        = top  + 'px';
+  tt.style.left       = left + 'px';
+  tt.style.visibility = '';
+  tt.classList.add('visible');
+}
+
+function hideVocabTooltip() {
+  if (vocabTooltipEl) {
+    vocabTooltipEl.classList.remove('visible');
+    vocabTooltipEl.style.display = 'none';
+  }
+}
+
 // DOM
 const bgEl            = document.getElementById('background');
 const textEl          = document.getElementById('text');
@@ -215,15 +259,20 @@ function typeText(text, callback) {
 
   tick();
 
-  // Click on a tooltip word → toggle translation bubble; click elsewhere → skip animation
+  // Click/tap on a tooltip word → show fixed tooltip; click elsewhere → hide + skip animation
   textEl.onclick = (e) => {
     const tip = e.target.closest('.word-tip');
     if (tip) {
+      const wasActive = tip.classList.contains('active');
       textEl.querySelectorAll('.word-tip.active').forEach(t => { if (t !== tip) t.classList.remove('active'); });
+      hideVocabTooltip();
       tip.classList.toggle('active');
+      if (!wasActive) showVocabTooltip(tip);
       if (window.Analytics) Analytics.vocabTap(tip.textContent, tip.dataset.en);
       return;
     }
+    textEl.querySelectorAll('.word-tip.active').forEach(t => t.classList.remove('active'));
+    hideVocabTooltip();
     if (isTyping) {
       if (window.Analytics) Analytics.typewriterSkip();
       textEl.textContent = text;
