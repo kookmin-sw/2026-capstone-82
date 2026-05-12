@@ -350,7 +350,7 @@ function renderProfiles(profiles) {
 function renderDashboard(events) {
   // ── Summary ──────────────────────────────────────────────
   const sessions  = new Set(events.map(e => e.sessionId).filter(Boolean)).size;
-  const users     = new Set(events.map(e => e.email).filter(Boolean)).size;
+  const users     = new Set(events.map(e => e.userId).filter(Boolean)).size;
   const starts    = events.filter(e => e.eventType === 'mission_start').length;
   const completes = events.filter(e => e.eventType === 'mission_complete').length;
   const abandons  = events.filter(e => e.eventType === 'mission_abandon').length;
@@ -515,13 +515,14 @@ function renderDashboard(events) {
                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
   });
 
-  // ── Top chatbot questions ─────────────────────────────────
+  // ── Top chatbot questions (2+ occurrences only — privacy: single queries hidden) ──
   const qCounts = {};
   events.filter(e => e.eventType === 'chatbot_query' && e.question).forEach(e => {
-    const q = e.question.trim();
+    const q = e.question.trim().slice(0, 120); // cap length
     qCounts[q] = (qCounts[q] || 0) + 1;
   });
-  const topQ = Object.entries(qCounts).sort((a,b) => b[1]-a[1]).slice(0, 15);
+  // Only show questions asked by multiple users (filters out one-time personal queries)
+  const topQ = Object.entries(qCounts).filter(([,c]) => c >= 2).sort((a,b) => b[1]-a[1]).slice(0, 15);
   const qList = document.getElementById('queries-list');
   qList.innerHTML = '';
   if (!topQ.length) {
