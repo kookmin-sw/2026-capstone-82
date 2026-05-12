@@ -1116,6 +1116,111 @@ button:active {
 .mypage-logout-btn:hover {
   background: #FFF1F2;
 }
+.mypage-close-btn {
+  margin-left: auto;
+  align-self: flex-start;
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  width: auto;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.mypage-close-btn:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Logout confirmation modal */
+#logout-confirm-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 600;
+  align-items: center;
+  justify-content: center;
+}
+#logout-confirm-overlay.active {
+  display: flex;
+}
+#logout-confirm-panel {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 28px 24px 22px;
+  width: 290px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+}
+.logout-confirm-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  width: auto;
+  padding: 2px 5px;
+  border-radius: var(--radius-sm);
+  transition: background 0.12s ease;
+}
+.logout-confirm-close:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+.logout-confirm-icon {
+  margin-bottom: 12px;
+}
+.logout-confirm-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 6px;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.logout-confirm-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 20px;
+}
+.logout-confirm-actions {
+  display: flex;
+  gap: 10px;
+}
+.logout-cancel-btn,
+.logout-ok-btn {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.14s ease;
+}
+.logout-cancel-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.logout-cancel-btn:hover {
+  background: var(--border);
+}
+.logout-ok-btn {
+  background: #E8192C;
+  border: none;
+  color: #fff;
+}
+.logout-ok-btn:hover {
+  background: #c0001f;
+}
 
 /* ===================================================================
    MISSION COMPLETE POPUP

@@ -141,6 +141,7 @@
       <div class="mypage-greeting"><span id="mypage-name-text"></span> <span class="mypage-welcome">환영합니다!</span></div>
       <div id="mypage-email-text" class="mypage-email"></div>
     </div>
+    <button class="mypage-close-btn" onclick="closeMyPage()" title="닫기">×</button>
   </div>
   <div class="mypage-divider"></div>
   <div class="mypage-actions">
@@ -148,7 +149,7 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       개인정보 수정
     </button>
-    <button class="mypage-action-btn mypage-logout-btn" id="mypage-logout-btn">
+    <button class="mypage-action-btn mypage-logout-btn" id="mypage-logout-btn" onclick="showLogoutConfirm()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       로그아웃 · Log out
     </button>
@@ -500,6 +501,22 @@
       </form>
     </div>
 
+  </div>
+</div>
+
+<!-- Logout confirmation modal -->
+<div id="logout-confirm-overlay">
+  <div id="logout-confirm-panel">
+    <button class="logout-confirm-close" onclick="hideLogoutConfirm()">×</button>
+    <div class="logout-confirm-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E8192C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </div>
+    <h3 class="logout-confirm-title">로그아웃 하시겠습니까?</h3>
+    <p class="logout-confirm-desc">Are you sure you want to log out?</p>
+    <div class="logout-confirm-actions">
+      <button class="logout-cancel-btn" onclick="hideLogoutConfirm()">취소 · Cancel</button>
+      <button class="logout-ok-btn" onclick="logoutUser()">로그아웃 · Log out</button>
+    </div>
   </div>
 </div>
 
@@ -860,8 +877,17 @@ function closeMyPage() {
   document.getElementById('profile-btn').classList.remove('open');
 }
 
-function logoutUser() {
+function showLogoutConfirm() {
   closeMyPage();
+  document.getElementById('logout-confirm-overlay').classList.add('active');
+}
+
+function hideLogoutConfirm() {
+  document.getElementById('logout-confirm-overlay').classList.remove('active');
+}
+
+function logoutUser() {
+  hideLogoutConfirm();
   localStorage.removeItem('user_profile');
   const ALL = ['exchange','lostfound','convstore','subway','telecom','immigration',
                'bank','realestate','garbage','hospital','pharmacy','clothing'];
@@ -884,7 +910,6 @@ function initProfile() {
   document.getElementById('register-back-btn').addEventListener('click', showLoginView);
   document.getElementById('login-email').addEventListener('keydown', e => { if (e.key === 'Enter') handleEmailLookup(); });
   document.getElementById('mypage-edit-btn').addEventListener('click', () => { closeMyPage(); openProfileModal(false); });
-  document.getElementById('mypage-logout-btn').addEventListener('click', logoutUser);
   // Close dropdown when clicking outside
   document.addEventListener('click', e => {
     if (!document.getElementById('profile-btn').contains(e.target) &&
