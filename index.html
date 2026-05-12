@@ -468,8 +468,9 @@
         </div>
 
         <div class="form-group" id="arrival-group">
-          <label class="form-label" for="f-arrival">한국 입국 예정일 · Planned Arrival to Korea</label>
+          <label class="form-label" for="f-arrival">한국 입국 예정일 · Planned Arrival to Korea <span class="form-required">*</span></label>
           <input class="form-input" type="date" id="f-arrival" style="max-width:200px">
+          <div class="profile-error-msg" id="err-arrival">입국 예정일을 입력해주세요.</div>
         </div>
 
         <div class="form-divider"></div>
@@ -555,7 +556,14 @@ function setMode(mode) {
   renderMissions();
 }
 
+let pendingMissionId = null;
+
 function goMission(missionId) {
+  if (!getUserProfile()) {
+    pendingMissionId = missionId;
+    openProfileModal(true);
+    return;
+  }
   window.location.href = `game.html?mission=${missionId}`;
 }
 
@@ -730,6 +738,12 @@ async function handleEmailLookup() {
     renderMissions();
     document.getElementById('profile-overlay').classList.remove('active');
     document.getElementById('profile-btn').style.display = 'flex';
+    updateMyPageBtn();
+    if (pendingMissionId) {
+      const dest = `game.html?mission=${pendingMissionId}`;
+      pendingMissionId = null;
+      window.location.href = dest;
+    }
   } else {
     document.getElementById('err-not-found').style.display = 'block';
     setTimeout(() => showRegisterView(email), 1200);
@@ -770,6 +784,7 @@ function validateAndSave(e) {
   setErr('err-age',         isNaN(age) || age < 10 || age > 100);
   if (isNaN(age) || age < 10 || age > 100)     valid = false;
   setErr('err-location',    !location);        if (!location) valid = false;
+  setErr('err-arrival',     !inKorea && !arrival); if (!inKorea && !arrival) valid = false;
   setErr('err-purpose',     !purpose);         if (!purpose) valid = false;
 
   if (!valid) return;
@@ -789,6 +804,11 @@ function validateAndSave(e) {
   document.getElementById('profile-overlay').classList.remove('active');
   document.getElementById('profile-btn').style.display = 'flex';
   updateMyPageBtn();
+  if (pendingMissionId) {
+    const dest = `game.html?mission=${pendingMissionId}`;
+    pendingMissionId = null;
+    window.location.href = dest;
+  }
 }
 
 // Collect all cleared mission IDs from localStorage
@@ -855,8 +875,6 @@ function initProfile() {
   if (profile) {
     updateMyPageBtn();
     document.getElementById('profile-btn').style.display = 'flex';
-  } else {
-    openProfileModal(true);
   }
 
   document.querySelectorAll('input[name="in-korea"]').forEach(r => r.addEventListener('change', toggleArrivalField));
