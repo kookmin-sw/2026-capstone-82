@@ -10,7 +10,7 @@ const exchangeMission = {
 
   helperContext: `The player just arrived at Incheon International Airport.
 Their goal: find the currency exchange counter (환전소) and change US dollars to Korean won (KRW).
-Current exchange rate in the game: 1 USD ≈ 1,350 KRW.
+Current exchange rate in the game: 1 USD ≈ 1,400 KRW.
 The exchange counter requires showing a passport (여권).
 Airport exchanges have slightly worse rates than city banks, but are convenient.
 Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
@@ -84,7 +84,7 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
     scenes.step5 = () => {
       let text;
       if (ch4 === '1')      text = '환전소 직원: 네, 얼마를 환전해 드릴까요?';
-      else if (ch4 === '2') text = '환전소 직원: 현재 환율은 1달러에 1,350원입니다. 얼마를 환전하시겠어요?';
+      else if (ch4 === '2') text = '환전소 직원: 현재 환율은 1달러에 1,400원입니다. 얼마를 환전하시겠어요?';
       else                  text = '환전소 직원: 아, 달러를 환전하시려고요? 얼마를 환전해 드릴까요?';
       typeText(text, () => {
         addChoice('100달러 환전해 주세요.', '1');
@@ -96,9 +96,9 @@ Polite speech (존댓말) is expected. Typical amounts: 100, 500, or 1000 USD.`,
 
     scenes.step6 = () => {
       let text;
-      if (ch5 === '1')      text = '환전소 직원: 100달러요? 그럼 135,000원이 됩니다.';
-      else if (ch5 === '2') text = '환전소 직원: 500달러요? 그럼 675,000원이 됩니다.';
-      else                  text = '환전소 직원: 1000달러요? 그럼 1,350,000원이 됩니다.';
+      if (ch5 === '1')      text = '환전소 직원: 100달러요? 그럼 140,000원이 됩니다.';
+      else if (ch5 === '2') text = '환전소 직원: 500달러요? 그럼 700,000원이 됩니다.';
+      else                  text = '환전소 직원: 1000달러요? 그럼 1,400,000원이 됩니다.';
       typeText(text, () => {
         addChoice('네, 환전해 주세요.', '1');
         addChoice('(달러를 건넨다)', '2');
