@@ -11,11 +11,11 @@ const immigrationMission = {
   helperContext: `The player is at a Korean Immigration Office (출입국관리사무소) to apply for an Alien Registration Card (외국인등록증, ARC).
 Foreigners staying in Korea longer than 90 days MUST get an ARC within 90 days of arrival.
 Required documents vary by visa type:
-- D-2 (student): 통합신청서, passport + copy, photo (3.5x4.5cm white bg), proof of address, enrollment certificate + tuition receipt, 30,000 KRW cash
+- D-2 (student): 통합신청서, passport + copy, photo (3.5x4.5cm white bg), proof of address, enrollment certificate + tuition receipt, 60,000 KRW cash
 - E-series (work): same base docs + employment contract + business registration copy
 - D-4 (language student): same base docs + admission letter + tuition receipt
 The application form (통합신청서 별지 제34호) is available at Hikorea (www.hikorea.go.kr).
-Fee is 30,000 KRW cash only. Card arrives in 3–4 weeks by mail or in-person pickup.`,
+Fee is 60,000 KRW cash only. Card arrives in 3–4 weeks by mail or in-person pickup.`,
 
   vocabulary: [
     { kr: '출입국관리사무소', en: 'immigration office', rom: 'churipguk gwanri samusso' },
@@ -66,9 +66,9 @@ Fee is 30,000 KRW cash only. Card arrives in 3–4 weeks by mail or in-person pi
 
     scenes.step4 = () => {
       const docs = {
-        '1': '안내원: D-2 유학 비자시군요! 필요한 서류를 안내해 드릴게요.\n\n📋 통합신청서 (별지 제34호 서식)\n📕 여권 원본 및 인적사항면 사본\n📷 컬러 사진 1매 (3.5x4.5cm, 흰 배경)\n🏠 체류지 입증 서류\n📄 재학증명서 + 등록금 납입증명서\n💰 수수료 30,000원 (현금만 가능)',
-        '2': '안내원: E-시리즈 취업 비자시군요! 필요한 서류를 안내해 드릴게요.\n\n📋 통합신청서 (별지 제34호 서식)\n📕 여권 원본 및 인적사항면 사본\n📷 컬러 사진 1매 (3.5x4.5cm, 흰 배경)\n🏠 체류지 입증 서류\n📄 고용계약서 + 사업자등록증 사본\n💰 수수료 30,000원 (현금만 가능)',
-        '3': '안내원: D-4 어학연수 비자시군요! 필요한 서류를 안내해 드릴게요.\n\n📋 통합신청서 (별지 제34호 서식)\n📕 여권 원본 및 인적사항면 사본\n📷 컬러 사진 1매 (3.5x4.5cm, 흰 배경)\n🏠 체류지 입증 서류\n📄 표준입학허가서 + 등록금 납입증명서\n💰 수수료 30,000원 (현금만 가능)',
+        '1': '안내원: D-2 유학 비자시군요! 필요한 서류를 안내해 드릴게요.\n\n📋 통합신청서 (별지 제34호 서식)\n📕 여권 원본 및 인적사항면 사본\n📷 컬러 사진 1매 (3.5x4.5cm, 흰 배경)\n🏠 체류지 입증 서류\n📄 재학증명서 + 등록금 납입증명서\n💰 수수료 60,000원 (현금만 가능)',
+        '2': '안내원: E-시리즈 취업 비자시군요! 필요한 서류를 안내해 드릴게요.\n\n📋 통합신청서 (별지 제34호 서식)\n📕 여권 원본 및 인적사항면 사본\n📷 컬러 사진 1매 (3.5x4.5cm, 흰 배경)\n🏠 체류지 입증 서류\n📄 고용계약서 + 사업자등록증 사본\n💰 수수료 60,000원 (현금만 가능)',
+        '3': '안내원: D-4 어학연수 비자시군요! 필요한 서류를 안내해 드릴게요.\n\n📋 통합신청서 (별지 제34호 서식)\n📕 여권 원본 및 인적사항면 사본\n📷 컬러 사진 1매 (3.5x4.5cm, 흰 배경)\n🏠 체류지 입증 서류\n📄 표준입학허가서 + 등록금 납입증명서\n💰 수수료 60,000원 (현금만 가능)',
       };
       typeText(docs[ch3], () => {
         addChoice('네, 다 준비했습니다!', '1');
@@ -159,8 +159,8 @@ Fee is 30,000 KRW cash only. Card arrives in 3–4 weeks by mail or in-person pi
     };
 
     scenes.step15 = () => {
-      typeText('담당 직원: 수수료 30,000원을 납부해 주세요.\n현금만 가능합니다.', () => {
-        addChoice('(30,000원을 건넨다)', '1');
+      typeText('담당 직원: 수수료 60,000원을 납부해 주세요.\n현금만 가능합니다.', () => {
+        addChoice('(60,000원을 건넨다)', '1');
         addChoice('카드로 안 되나요?', '2');
         waitForChoice(v => { ch15 = v; go('step16'); });
       });
