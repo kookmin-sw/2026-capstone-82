@@ -125,6 +125,12 @@
 </div>
 
 
+<!-- Login button (visible when NOT logged in) -->
+<button id="login-btn" onclick="openProfileModal(true)">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+  <span>로그인 · Sign In</span>
+</button>
+
 <!-- My Page button (visible after registration) -->
 <button id="profile-btn" onclick="toggleMyPage()">
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -755,6 +761,7 @@ async function handleEmailLookup() {
     renderMissions();
     document.getElementById('profile-overlay').classList.remove('active');
     document.getElementById('profile-btn').style.display = 'flex';
+    document.getElementById('login-btn').style.display = 'none';
     updateMyPageBtn();
     if (pendingMissionId) {
       const dest = `game.html?mission=${pendingMissionId}`;
@@ -820,6 +827,7 @@ function validateAndSave(e) {
   if (window.Analytics) Analytics.userRegistered();
   document.getElementById('profile-overlay').classList.remove('active');
   document.getElementById('profile-btn').style.display = 'flex';
+  document.getElementById('login-btn').style.display = 'none';
   updateMyPageBtn();
   if (pendingMissionId) {
     const dest = `game.html?mission=${pendingMissionId}`;
@@ -888,6 +896,8 @@ function hideLogoutConfirm() {
 
 function logoutUser() {
   hideLogoutConfirm();
+  document.getElementById('profile-btn').style.display = 'none';
+  document.getElementById('login-btn').style.display = 'flex';
   localStorage.removeItem('user_profile');
   const ALL = ['exchange','lostfound','convstore','subway','telecom','immigration',
                'bank','realestate','garbage','hospital','pharmacy','clothing'];
@@ -901,6 +911,9 @@ function initProfile() {
   if (profile) {
     updateMyPageBtn();
     document.getElementById('profile-btn').style.display = 'flex';
+    document.getElementById('login-btn').style.display = 'none';
+  } else {
+    document.getElementById('login-btn').style.display = 'flex';
   }
 
   document.querySelectorAll('input[name="in-korea"]').forEach(r => r.addEventListener('change', toggleArrivalField));
