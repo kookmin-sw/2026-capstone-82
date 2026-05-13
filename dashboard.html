@@ -97,6 +97,27 @@ h1 { font-size: 26px; font-weight: 700; }
     </div>
   </div>
 
+  <!-- ── 교차 분석 ────────────────────────────────────────── -->
+  <div class="section-header">
+    <h2>교차 분석 · 누가, 어떻게 플레이하나요?</h2>
+    <span class="sh-sub">프로필 + 행동 데이터 결합</span>
+  </div>
+
+  <div class="charts">
+    <div class="chart-card accent">
+      <h2>나이 × 방한 목적</h2>
+      <canvas id="ch-age-purpose"></canvas>
+    </div>
+    <div class="chart-card accent">
+      <h2>국적 × 방한 목적 (상위 8개국)</h2>
+      <canvas id="ch-nat-purpose"></canvas>
+    </div>
+    <div class="chart-card accent wide">
+      <h2>한국 거주 여부 × 미션 플레이 (현재 거주 vs 미거주)</h2>
+      <canvas id="ch-inkorea-mission"></canvas>
+    </div>
+  </div>
+
   <!-- ── 행동 분석 ────────────────────────────────────────── -->
   <div class="section-header">
     <h2>행동 분석 · 어떻게 플레이하나요?</h2>
@@ -202,6 +223,7 @@ async function loadData() {
       '· 업데이트됨 / Updated: ' + new Date().toLocaleTimeString();
 
     renderProfiles(profiles);
+    renderCrossProfileCharts(profiles);
     renderDashboard(events);
   } catch (e) {
     showError('Firestore 오류 / Firestore error: ' + e.message +
@@ -347,7 +369,98 @@ function renderProfiles(profiles) {
   });
 }
 
+function renderCrossProfileCharts(profiles) {
+  // ── Chart 1: Age × Purpose ──────────────────────────────
+  const AGE_BUCKETS  = ['18-24', '25-29', '30-34', '35-39', '40+'];
+  const ageWork   = {'18-24':0,'25-29':0,'30-34':0,'35-39':0,'40+':0};
+  const ageStudy  = {'18-24':0,'25-29':0,'30-34':0,'35-39':0,'40+':0};
+  const ageTravel = {'18-24':0,'25-29':0,'30-34':0,'35-39':0,'40+':0};
+
+  profiles.forEach(p => {
+    if (!p.age || !p.purpose) return;
+    const a = parseInt(p.age);
+    const b = a < 25 ? '18-24' : a < 30 ? '25-29' : a < 35 ? '30-34' : a < 40 ? '35-39' : '40+';
+    if (p.purpose === 'work')   ageWork[b]++;
+    if (p.purpose === 'study')  ageStudy[b]++;
+    if (p.purpose === 'travel') ageTravel[b]++;
+  });
+
+  new Chart(document.getElementById('ch-age-purpose'), {
+    type: 'bar',
+    data: {
+      labels: AGE_BUCKETS,
+      datasets: [
+        { label: '취업 / Work 💼',    data: AGE_BUCKETS.map(b => ageWork[b]),   backgroundColor: 'rgba(0,122,255,0.78)' },
+        { label: '유학 / Study 📚',   data: AGE_BUCKETS.map(b => ageStudy[b]),  backgroundColor: 'rgba(52,199,89,0.78)' },
+        { label: '여행 / Travel ✈️',  data: AGE_BUCKETS.map(b => ageTravel[b]), backgroundColor: 'rgba(255,149,0,0.78)' },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' } },
+      scales: { x: { grid: { display: false } }, y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+    },
+  });
+
+  // ── Chart 2: Nationality × Purpose ─────────────────────
+  const natPurp = {};
+  profiles.forEach(p => {
+    if (!p.nationality || !p.purpose) return;
+    if (!natPurp[p.nationality]) natPurp[p.nationality] = { work:0, study:0, travel:0 };
+    natPurp[p.nationality][p.purpose] = (natPurp[p.nationality][p.purpose] || 0) + 1;
+  });
+
+  const topNats = Object.entries(natPurp)
+    .sort((a,b) => (b[1].work+b[1].study+b[1].travel) - (a[1].work+a[1].study+a[1].travel))
+    .slice(0, 8)
+    .map(([nat]) => nat);
+
+  new Chart(document.getElementById('ch-nat-purpose'), {
+    type: 'bar',
+    data: {
+      labels: topNats,
+      datasets: [
+        { label: '취업 / Work 💼',    data: topNats.map(n => natPurp[n].work),   backgroundColor: 'rgba(0,122,255,0.78)', stack: 's' },
+        { label: '유학 / Study 📚',   data: topNats.map(n => natPurp[n].study),  backgroundColor: 'rgba(52,199,89,0.78)',  stack: 's' },
+        { label: '여행 / Travel ✈️',  data: topNats.map(n => natPurp[n].travel), backgroundColor: 'rgba(255,149,0,0.78)', stack: 's' },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' } },
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } },
+      },
+    },
+  });
+}
+
 function renderDashboard(events) {
+  // ── Chart 3: inKorea × Mission ──────────────────────────
+  const mInKorea = {}, mOutside = {};
+  MISSION_ORDER.forEach(m => { mInKorea[m] = 0; mOutside[m] = 0; });
+  events.filter(e => e.eventType === 'mission_start' && e.missionId).forEach(e => {
+    if      (e.inKorea === true)  mInKorea[e.missionId] = (mInKorea[e.missionId] || 0) + 1;
+    else if (e.inKorea === false) mOutside[e.missionId] = (mOutside[e.missionId] || 0) + 1;
+  });
+  new Chart(document.getElementById('ch-inkorea-mission'), {
+    type: 'bar',
+    data: {
+      labels: MISSION_ORDER.map(m => MISSION_LABELS[m]),
+      datasets: [
+        { label: '한국 거주 중 🏠', data: MISSION_ORDER.map(m => mInKorea[m]), backgroundColor: 'rgba(52,199,89,0.80)' },
+        { label: '해외 거주 ✈️',   data: MISSION_ORDER.map(m => mOutside[m]), backgroundColor: 'rgba(88,86,214,0.80)' },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+    },
+  });
+
+
   // ── Summary ──────────────────────────────────────────────
   const sessions  = new Set(events.map(e => e.sessionId).filter(Boolean)).size;
   const users     = new Set(events.map(e => e.userId).filter(Boolean)).size;
