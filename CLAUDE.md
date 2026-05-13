@@ -133,15 +133,18 @@ Calls the Claude API directly from the browser (`anthropic-dangerous-direct-brow
 Firebase CDN (compat v9.22.1) is loaded **only in `index.html`** — not in `game.html`. `js/db.js` is loaded after the CDN scripts. `game.html` does not use Firebase.
 Firebase CDN(compat v9.22.1)은 **`index.html` 에만** 로드됩니다 — `game.html` 에는 없습니다. `js/db.js` 는 CDN 이후에 로드됩니다.
 
-`js/db.js` exposes a single `DB` singleton with two async methods:
-`js/db.js` 는 두 가지 비동기 메서드를 가진 `DB` 싱글턴을 제공합니다:
+`js/db.js` exposes a `DB` singleton with these async methods:
+`js/db.js` 는 다음 비동기 메서드를 가진 `DB` 싱글턴을 제공합니다:
 - `DB.getProfile(email)` → Firestore document or `null` / Firestore 문서 또는 `null`
-- `DB.saveProfile(profile)` → upserts the document / 문서 업서트
+- `DB.saveProfile(profile)` → upserts with `merge: true` (never overwrites fields not in profile) / `merge: true` 로 업서트 (없는 필드 덮어쓰지 않음)
+- `DB.appendCityHistory(email, cityEntry)` → appends `{city, changedAt}` to `cityHistory[]` via `FieldValue.arrayUnion` — use when city changes on profile update / `FieldValue.arrayUnion` 으로 cityHistory 배열에 누적 추가 — 도시 변경 시 사용
+- `DB.logEvent(event)` → writes to `events` collection / `events` 컬렉션에 이벤트 기록
+- `DB.getEvents(limitCount)` → reads `events` descending by timestamp / 타임스탬프 내림차순으로 이벤트 조회 (dashboard 전용)
 
 **Firestore schema / Firestore 스키마:**
 - Collection: `user_profiles`
 - Document ID: `btoa(email.toLowerCase().trim())` with `+` → `-`, `/` → `_`, `=` stripped (URL-safe base64)
-- Document fields: all profile fields (`email`, `nationality`, `age`, `location`, `inKorea`, `plannedArrival`, `purpose`, `registeredAt`, `updatedAt`) plus `clearedMissions` (array of mission ID strings) / 모든 프로필 필드 + `clearedMissions` (완료된 미션 ID 배열)
+- Document fields: all profile fields (`email`, `nationality`, `age`, `location`, `inKorea`, `plannedArrival`, `purpose`, `cityKorea`, `visitCount`, `topik`, `registeredAt`, `updatedAt`) plus `clearedMissions` (array) and `cityHistory` (array of `{city, changedAt}` objects) / 모든 프로필 필드 + `clearedMissions` (완료 미션 ID 배열) + `cityHistory` (도시 이력 배열)
 
 **Login flow / 로그인 흐름** (`loginWithEmail()` in `index.html` inline script):
 1. User enters email → `DB.getProfile(email)` is called. / 사용자가 이메일 입력 → `DB.getProfile(email)` 호출.
@@ -155,8 +158,13 @@ Firebase CDN(compat v9.22.1)은 **`index.html` 에만** 로드됩니다 — `gam
 
 ## Analytics (`js/analytics.js`) / 분석
 
-`var Analytics` (not `const` — must create `window.Analytics` property for cross-script access). Tracks 15 event types to the Firestore `events` collection.
-`var Analytics` (`const` 금지 — 크로스 스크립트 접근을 위해 `window.Analytics` 속성이 반드시 생성되어야 함). Firestore `events` 컬렉션에 15가지 이벤트 유형을 기록합니다.
+`var Analytics` (not `const` — must create `window.Analytics` property for cross-script access). Tracks 16 event types to the Firestore `events` collection.
+`var Analytics` (`const` 금지 — 크로스 스크립트 접근을 위해 `window.Analytics` 속성이 반드시 생성되어야 함). Firestore `events` 컬렉션에 16가지 이벤트 유형을 기록합니다.
+
+Event types: `session_start`, `mode_change`, `user_registered`, `user_logged_in`, `mission_start`, `mission_retry`, `mission_complete`, `mission_abandon`, `choice_made`, `scene_advance`, `typewriter_skip`, `vocab_tap`, `vocab_card_reveal`, `chatbot_open`, `chatbot_query`, `chatbot_error`.
+
+`mission_retry` fires in `startMission()` when `localStorage.getItem('cleared_<id>')` is already set — i.e. the user replays a finished mission. It fires *before* `mission_start`.
+`mission_retry` 는 `startMission()` 에서 `cleared_<id>` 가 이미 localStorage 에 존재할 때 발생합니다 — 즉 완료된 미션을 다시 시작할 때. `mission_start` 보다 먼저 발생합니다.
 
 All hooks in `game.js` and `chatbot.js` check `if (window.Analytics)` before calling. This guard is required because `game.html` loads Firebase and Analytics asynchronously.
 `game.js` 와 `chatbot.js` 의 모든 훅은 호출 전 `if (window.Analytics)` 를 확인합니다. `game.html` 이 Firebase와 Analytics를 비동기로 로드하기 때문입니다.
@@ -232,9 +240,18 @@ On first visit, `#profile-overlay` modal appears and collects:
 | inKorea / 한국 거주 여부 | `input[name="in-korea"]` radio | boolean |
 | plannedArrival / 입국 예정일 | `#f-arrival` (date, hidden if inKorea) | ISO date string or null |
 | purpose / 방문 목적 | `input[name="purpose"]` radio | `"work"` \| `"study"` \| `"travel"` |
+| cityKorea / 한국 내 도시 | `#f-city-single` select (work/study) or checkboxes (travel, max 3) | string (work/study) \| string[] (travel) |
+| visitCount / 방문 횟수 | `input[name="visit-count"]` radio | `"first"` \| `"2to3"` \| `"4plus"` |
+| topik / 한국어 수준 | `#f-topik` (select) | `"topik0"` … `"topik6"` |
 
-Stored in `localStorage["user_profile"]` as JSON. Also synced to Firestore via `DB.saveProfile()`.
-`localStorage["user_profile"]` 에 JSON 으로 저장됩니다. `DB.saveProfile()` 을 통해 Firestore 에도 동기화됩니다.
+`cityKorea` is **mandatory** and its type depends on `purpose`: a single string for `work`/`study`, an array for `travel`. The `updateCityField()` function in the inline script shows/hides the correct input based on the current `inKorea` + `purpose` combination.
+`cityKorea` 는 **필수** 필드이며, `purpose` 에 따라 타입이 다릅니다: `work`/`study` 는 string, `travel` 은 string[]. `updateCityField()` 함수가 현재 inKorea + purpose 조합에 따라 올바른 입력 필드를 표시/숨깁니다.
+
+After saving, `DB.appendCityHistory(email, {city: cityKorea, changedAt: updatedAt})` is called to accumulate city change history without overwriting previous entries.
+저장 후 `DB.appendCityHistory` 를 호출해 도시 이력을 누적합니다 — 이전 항목은 덮어쓰지 않습니다.
+
+Stored in `localStorage["user_profile"]` as JSON. Also synced to Firestore via `DB.saveProfile()` (uses `merge: true`).
+`localStorage["user_profile"]` 에 JSON 으로 저장됩니다. `DB.saveProfile()` (`merge: true`) 을 통해 Firestore 에도 동기화됩니다.
 
 The modal has two views — **login** (`#login-view`: email-only, restores profile from Firestore) and **register** (`#register-view`: full form). First-time visitors see the register view directly.
 모달은 두 화면으로 구성됩니다 — **로그인**(`#login-view`: 이메일만, Firestore 에서 프로필 복원)과 **등록**(`#register-view`: 전체 양식). 첫 방문자는 바로 등록 화면을 봅니다.
@@ -264,3 +281,6 @@ The modal has two views — **login** (`#login-view`: email-only, restores profi
 - **Background images are landscape-only** — `~2400×1700 px`. `Airport_pv.jpeg` is portrait-format but is unused. / 배경 이미지는 가로형(`~2400×1700px`)만 사용. `Airport_pv.jpeg` 는 세로형이지만 어느 미션에서도 사용하지 않습니다.
 - **`const Analytics` vs `var Analytics`** — Must use `var` so `window.Analytics` property is created. `const` at global scope does NOT create a `window.X` property, breaking all cross-script hooks. / `var` 를 사용해야 `window.Analytics` 속성이 생성됩니다. 전역 스코프의 `const` 는 `window.X` 속성을 만들지 않아 모든 크로스 스크립트 훅이 작동하지 않습니다.
 - **`Hospital_Pharmacy_Garbage/` is prototype-only** — Do not link to them from `index.html` or `game.html`. / 프로토타입 전용 폴더 — `index.html` 이나 `game.html` 에서 링크하지 마세요.
+- **`dashboard.html` inline script scope** — all chart-rendering code must be inside a named function (`renderProfiles`, `renderCrossProfileCharts`, `renderDashboard`). Code placed at the top level of the `<script>` block runs immediately at parse time *before* `loadData()` — any reference to `profiles` or `events` there will throw a `ReferenceError` and silently freeze the page at "데이터 불러오는 중…". / 모든 차트 렌더링 코드는 반드시 함수 안에 있어야 합니다. `<script>` 블록 최상단에 놓인 코드는 `loadData()` 보다 먼저 실행되므로 `profiles`/`events` 참조 시 ReferenceError 가 발생해 페이지가 로딩 화면에서 멈춥니다.
+- **`renderDashboard(events, profiles)`** — the second argument `profiles` is required for the TOPIK × retry cross-analysis chart. Pass both from `loadData()`. / 두 번째 인수 `profiles` 는 TOPIK × 재플레이 차트에 필요합니다. `loadData()` 에서 반드시 두 인수를 모두 전달하세요.
+- **`cityKorea` type is polymorphic** — `string` for work/study users, `string[]` for travel users. Always handle both when reading in dashboard or any other consumer. / `cityKorea` 는 work/study 사용자는 string, travel 은 string[] 입니다. 읽는 쪽에서 반드시 두 타입을 모두 처리해야 합니다.
