@@ -354,11 +354,31 @@ footer {
   border-radius: 20px; overflow: hidden;
   border: 1px solid var(--border);
   box-shadow: 0 32px 80px rgba(0,0,0,0.55);
-  background: #000;
+  background: #000; display: block; text-decoration: none;
+  transition: transform 0.25s, box-shadow 0.25s;
 }
-.video-wrapper iframe {
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%; border: none;
+.video-wrapper:hover { transform: translateY(-4px); box-shadow: 0 44px 100px rgba(0,0,0,0.7); }
+.video-wrapper img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0.82; transition: opacity 0.25s;
+}
+.video-wrapper:hover img { opacity: 0.6; }
+.video-play {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 80px; height: 80px; border-radius: 50%;
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, background 0.2s;
+}
+.video-wrapper:hover .video-play { transform: translate(-50%,-50%) scale(1.12); background: rgba(255,0,0,0.75); }
+.video-play svg { margin-left: 6px; }
+.video-yt-tag {
+  position: absolute; bottom: 16px; right: 16px;
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(0,0,0,0.72); backdrop-filter: blur(8px);
+  color: #fff; font-size: 13px; font-weight: 600;
+  padding: 7px 13px; border-radius: 8px; pointer-events: none;
 }
 
 /* ─── GitHub icon SVG ─── */
@@ -475,14 +495,20 @@ footer {
       <div class="section-line"></div>
     </div>
     <div class="fade-up" style="transition-delay:0.1s">
-      <div class="video-wrapper">
-        <iframe
-          src="https://www.youtube.com/embed/zDfqorRugog"
-          title="안녕 from Korea — Demo"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen>
-        </iframe>
-      </div>
+      <a href="https://youtu.be/zDfqorRugog" target="_blank" rel="noopener" class="video-wrapper">
+        <img
+          src="https://img.youtube.com/vi/zDfqorRugog/maxresdefault.jpg"
+          alt="안녕 from Korea 데모 영상"
+          onerror="this.src='https://img.youtube.com/vi/zDfqorRugog/hqdefault.jpg'"
+          loading="lazy">
+        <div class="video-play">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div class="video-yt-tag">
+          <svg width="18" height="13" viewBox="0 0 18 13"><rect width="18" height="13" rx="3" fill="#FF0000"/><polygon points="7,3 7,10 13,6.5" fill="white"/></svg>
+          YouTube에서 보기
+        </div>
+      </a>
     </div>
   </div>
 </section>
