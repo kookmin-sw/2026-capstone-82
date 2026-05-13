@@ -583,6 +583,22 @@
           <div class="profile-error-msg" id="err-visitcount">방문 횟수를 선택해주세요.</div>
         </div>
 
+        <!-- TOPIK level -->
+        <div class="form-group">
+          <label class="form-label" for="f-topik">한국어 수준 (TOPIK) <span class="form-required">*</span></label>
+          <select class="form-select" id="f-topik" style="max-width:320px">
+            <option value="">수준 선택 / Select level</option>
+            <option value="topik0">토픽 없음 · No TOPIK</option>
+            <option value="topik1">토픽 1급 · Lv.1 초보 (Beginner)</option>
+            <option value="topik2">토픽 2급 · Lv.2 초급 (Elementary)</option>
+            <option value="topik3">토픽 3급 · Lv.3 대화가능 (Pre-Intermediate)</option>
+            <option value="topik4">토픽 4급 · Lv.4 중급 (Intermediate)</option>
+            <option value="topik5">토픽 5급 · Lv.5 고급 (Advanced)</option>
+            <option value="topik6">토픽 6급 · Lv.6 최상위급 (Mastery)</option>
+          </select>
+          <div class="profile-error-msg" id="err-topik">한국어 수준을 선택해주세요.</div>
+        </div>
+
         <button type="submit" id="profile-submit">저장하고 시작하기 · Save &amp; Start →</button>
         <button id="register-back-btn" class="link-btn" type="button">← 로그인으로 돌아가기 · Back to login</button>
 
@@ -814,6 +830,7 @@ function openProfileModal(isFirstVisit) {
       const vc = document.querySelector(`input[name="visitcount"][value="${profile.visitCount}"]`);
       if (vc) vc.checked = true;
     }
+    if (profile.topik) document.getElementById('f-topik').value = profile.topik;
     updateCityField();
     if (profile.cityKorea) {
       if (Array.isArray(profile.cityKorea)) {
@@ -931,6 +948,7 @@ function validateAndSave(e) {
   const arrival     = document.getElementById('f-arrival').value;
   const purpose     = document.querySelector('input[name="purpose"]:checked')?.value;
   const visitCount  = document.querySelector('input[name="visitcount"]:checked')?.value;
+  const topik       = document.getElementById('f-topik').value;
   const citySingle  = document.getElementById('f-city-single').value;
   const cityChecked = [...document.querySelectorAll('input[name="city"]:checked')].map(c => c.value);
   const cityKorea   = purpose === 'travel' ? cityChecked : (citySingle || null);
@@ -952,6 +970,7 @@ function validateAndSave(e) {
   setErr('err-arrival',     !inKorea && !arrival); if (!inKorea && !arrival) valid = false;
   setErr('err-purpose',     !purpose);         if (!purpose) valid = false;
   setErr('err-visitcount',  !visitCount);      if (!visitCount) valid = false;
+  setErr('err-topik',       !topik);           if (!topik) valid = false;
 
   // City is required when the city field is visible
   const cityGroupVisible = document.getElementById('city-group').style.display !== 'none';
@@ -971,6 +990,7 @@ function validateAndSave(e) {
     purpose,
     cityKorea: cityKorea || null,
     visitCount: visitCount || null,
+    topik: topik || null,
     clearedMissions: getLocalClearedMissions(),
     registeredAt: getUserProfile()?.registeredAt || new Date().toISOString(),
     updatedAt: new Date().toISOString()

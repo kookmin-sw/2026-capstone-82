@@ -447,7 +447,10 @@ function startMission(missionId) {
   }
 
   preloadMissionImages(currentMission);
-  if (window.Analytics) Analytics.missionStart(missionId);
+  if (window.Analytics) {
+    if (localStorage.getItem('cleared_' + missionId)) Analytics.missionRetry(missionId);
+    Analytics.missionStart(missionId);
+  }
   currentStepKey = 'start';
   missionDone = false;
   changeBackground(currentMission.background);

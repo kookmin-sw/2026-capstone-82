@@ -112,6 +112,14 @@ h1 { font-size: 26px; font-weight: 700; }
       <h2>국적 × 방한 목적 (상위 8개국)</h2>
       <canvas id="ch-nat-purpose"></canvas>
     </div>
+    <div class="chart-card accent">
+      <h2>한국어 수준 (TOPIK) 분포</h2>
+      <canvas id="ch-topik"></canvas>
+    </div>
+    <div class="chart-card accent wide">
+      <h2>미션별 재플레이 횟수 (클리어 후 재시작)</h2>
+      <canvas id="ch-retries"></canvas>
+    </div>
     <div class="chart-card accent wide">
       <h2>한국 거주 여부 × 미션 플레이 (현재 거주 vs 미거주)</h2>
       <canvas id="ch-inkorea-mission"></canvas>
@@ -426,6 +434,35 @@ function renderCrossProfileCharts(profiles) {
   });
 }
 
+  // ── TOPIK distribution ─────────────────────────────────
+  const TOPIK_LABELS = {
+    topik0: '없음', topik1: '1급(초보)', topik2: '2급(초급)',
+    topik3: '3급(대화)', topik4: '4급(중급)', topik5: '5급(고급)', topik6: '6급(최상위)',
+  };
+  const topikKeys = ['topik0','topik1','topik2','topik3','topik4','topik5','topik6'];
+  const topikCount = {};
+  topikKeys.forEach(k => topikCount[k] = 0);
+  profiles.forEach(p => { if (p.topik && topikCount[p.topik] !== undefined) topikCount[p.topik]++; });
+
+  new Chart(document.getElementById('ch-topik'), {
+    type: 'bar',
+    data: {
+      labels: topikKeys.map(k => TOPIK_LABELS[k]),
+      datasets: [{
+        label: '사용자 수',
+        data: topikKeys.map(k => topikCount[k]),
+        backgroundColor: ['#c7c7cc','#5ac8fa','#34c759','#007aff','#ff9500','#af52de','#ff3b30'],
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { grid: { display: false } } },
+    },
+  });
+}
+
 function renderDashboard(events) {
   // ── Chart 3: inKorea × Mission ──────────────────────────
   const mInKorea = {}, mOutside = {};
@@ -450,6 +487,36 @@ function renderDashboard(events) {
     },
   });
 
+
+  // ── Retry count per mission ──────────────────────────────
+  const mRetries = {};
+  MISSION_ORDER.forEach(m => mRetries[m] = 0);
+  events.filter(e => e.eventType === 'mission_retry' && e.missionId).forEach(e => {
+    mRetries[e.missionId] = (mRetries[e.missionId] || 0) + 1;
+  });
+  new Chart(document.getElementById('ch-retries'), {
+    type: 'bar',
+    data: {
+      labels: MISSION_ORDER.map(m => MISSION_LABELS[m]),
+      datasets: [{
+        label: '재플레이 횟수 / Retries',
+        data: MISSION_ORDER.map(m => mRetries[m]),
+        backgroundColor: MISSION_ORDER.map(m =>
+          mRetries[m] >= 5 ? 'rgba(255,59,48,0.8)' :
+          mRetries[m] >= 2 ? 'rgba(255,149,0,0.8)' : 'rgba(90,200,250,0.75)'
+        ),
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.raw}회 재플레이 — 가장 어려운 미션일수록 높음` } },
+      },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+    },
+  });
 
   // ── Summary ──────────────────────────────────────────────
   const sessions  = new Set(events.map(e => e.sessionId).filter(Boolean)).size;

@@ -64,6 +64,9 @@ var Analytics = (() => {
       _stepStart    = Date.now();
       track('mission_start');
     },
+    missionRetry(id) {
+      track('mission_retry', { missionId: id });
+    },
     missionComplete() {
       track('mission_complete', {
         durationMs: _missionStart ? Date.now() - _missionStart : null,
