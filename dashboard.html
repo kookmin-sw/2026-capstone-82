@@ -167,16 +167,6 @@ h1 { font-size: 26px; font-weight: 700; }
     </div>
 
     <div class="chart-card">
-      <h2>챗봇 질문 TOP</h2>
-      <ul class="queries-list" id="queries-list"><li style="color:#bbb">데이터 없음</li></ul>
-    </div>
-
-    <div class="chart-card">
-      <h2>가장 어려운 선택 (고민 시간 기준)</h2>
-      <ul class="diff-list" id="diff-list"><li style="color:#bbb">데이터 없음</li></ul>
-    </div>
-
-    <div class="chart-card">
       <h2>가장 많이 선택된 답변</h2>
       <canvas id="ch-choices"></canvas>
     </div>
@@ -627,51 +617,6 @@ function renderDashboard(events) {
     options: { responsive: true, plugins: { legend: { display: false } },
                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
   });
-
-  // ── Top chatbot questions (2+ occurrences only — privacy: single queries hidden) ──
-  const qCounts = {};
-  events.filter(e => e.eventType === 'chatbot_query' && e.question).forEach(e => {
-    const q = e.question.trim().slice(0, 120); // cap length
-    qCounts[q] = (qCounts[q] || 0) + 1;
-  });
-  // Only show questions asked by multiple users (filters out one-time personal queries)
-  const topQ = Object.entries(qCounts).filter(([,c]) => c >= 2).sort((a,b) => b[1]-a[1]).slice(0, 15);
-  const qList = document.getElementById('queries-list');
-  qList.innerHTML = '';
-  if (!topQ.length) {
-    qList.innerHTML = '<li style="color:#bbb">챗봇 질문 데이터 없음 / No chatbot queries yet</li>';
-  } else {
-    topQ.forEach(([q, cnt]) => {
-      const li = document.createElement('li');
-      li.innerHTML = `<span class="q-text">${escHtml(q)}</span><span class="cnt">${cnt}×</span>`;
-      qList.appendChild(li);
-    });
-  }
-
-  // ── Hardest steps (longest durationMs) ───────────────────
-  const stepTimes = {};
-  events.filter(e => e.eventType === 'choice_made' && e.durationMs && e.stepKey && e.missionId).forEach(e => {
-    const key = e.missionId + '::' + e.stepKey;
-    (stepTimes[key] = stepTimes[key] || []).push(e.durationMs);
-  });
-  const hardSteps = Object.entries(stepTimes)
-    .map(([key, arr]) => ({ key, avg: arr.reduce((a,b) => a+b,0) / arr.length }))
-    .sort((a,b) => b.avg - a.avg)
-    .slice(0, 12);
-  const dList = document.getElementById('diff-list');
-  dList.innerHTML = '';
-  if (!hardSteps.length) {
-    dList.innerHTML = '<li style="color:#bbb">데이터 없음 / No data yet</li>';
-  } else {
-    hardSteps.forEach(({ key, avg }) => {
-      const [mId, stepKey] = key.split('::');
-      const li = document.createElement('li');
-      li.innerHTML =
-        `<span class="step-name">${escHtml(stepKey)} <span class="mission-tag">[${MISSION_LABELS[mId] || mId}]</span></span>` +
-        `<span class="dur">${(avg/1000).toFixed(1)}s</span>`;
-      dList.appendChild(li);
-    });
-  }
 
   // ── Most common choices ───────────────────────────────────
   const choiceCounts = {};
