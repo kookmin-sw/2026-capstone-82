@@ -509,6 +509,61 @@
           <div class="profile-error-msg" id="err-purpose">목적을 선택해주세요.</div>
         </div>
 
+        <!-- Korean city (shown when inKorea=yes OR purpose selected) -->
+        <div class="form-group" id="city-group" style="display:none">
+          <label class="form-label" id="city-label">한국 내 도시 · City in Korea</label>
+          <!-- Single select: work / study -->
+          <select class="form-select" id="f-city-single" style="max-width:220px; display:none">
+            <option value="">도시 선택 / Select city</option>
+            <option value="Seoul">서울 · Seoul</option>
+            <option value="Busan">부산 · Busan</option>
+            <option value="Incheon">인천 · Incheon</option>
+            <option value="Daegu">대구 · Daegu</option>
+            <option value="Daejeon">대전 · Daejeon</option>
+            <option value="Gwangju">광주 · Gwangju</option>
+            <option value="Suwon">수원 · Suwon</option>
+            <option value="Ulsan">울산 · Ulsan</option>
+            <option value="Jeju">제주 · Jeju</option>
+            <option value="Other">기타 · Other</option>
+          </select>
+          <!-- Multi checkbox: travel (max 3) -->
+          <div id="f-city-travel" style="display:none">
+            <p style="font-size:12px;color:#888;margin-bottom:8px;">최대 3개 선택 · Select up to 3 cities</p>
+            <div class="form-checkbox-group" id="city-checkboxes">
+              <label class="checkbox-option"><input type="checkbox" name="city" value="Seoul"> 서울 · Seoul</label>
+              <label class="checkbox-option"><input type="checkbox" name="city" value="Busan"> 부산 · Busan</label>
+              <label class="checkbox-option"><input type="checkbox" name="city" value="Incheon"> 인천 · Incheon</label>
+              <label class="checkbox-option"><input type="checkbox" name="city" value="Daegu"> 대구 · Daegu</label>
+              <label class="checkbox-option"><input type="checkbox" name="city" value="Daejeon"> 대전 · Daejeon</label>
+              <label class="checkbox-option"><input type="checkbox" name="city" value="Gwangju"> 광주 · Gwangju</label>
+              <label class="checkbox-option"><input type="checkbox" name="city" value="Suwon"> 수원 · Suwon</label>
+              <label class="checkbox-option"><input type="checkbox" name="city" value="Ulsan"> 울산 · Ulsan</label>
+              <label class="checkbox-option"><input type="checkbox" name="city" value="Jeju"> 제주 · Jeju</label>
+              <label class="checkbox-option"><input type="checkbox" name="city" value="Other"> 기타 · Other</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Korea visit count -->
+        <div class="form-group">
+          <label class="form-label">한국 방문 횟수 · Korea Visits <span class="form-required">*</span></label>
+          <div class="form-radio-group">
+            <div class="radio-option">
+              <input type="radio" name="visitcount" id="vc-first" value="first">
+              <label for="vc-first">처음 방문 · First time</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="visitcount" id="vc-2to3" value="2to3">
+              <label for="vc-2to3">2–3번 · 2–3 times</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="visitcount" id="vc-4plus" value="4plus">
+              <label for="vc-4plus">4번 이상 · 4+ times</label>
+            </div>
+          </div>
+          <div class="profile-error-msg" id="err-visitcount">방문 횟수를 선택해주세요.</div>
+        </div>
+
         <button type="submit" id="profile-submit">저장하고 시작하기 · Save &amp; Start →</button>
         <button id="register-back-btn" class="link-btn" type="button">← 로그인으로 돌아가기 · Back to login</button>
 
@@ -736,6 +791,21 @@ function openProfileModal(isFirstVisit) {
       const pr = document.querySelector(`input[name="purpose"][value="${profile.purpose}"]`);
       if (pr) pr.checked = true;
     }
+    if (profile.visitCount) {
+      const vc = document.querySelector(`input[name="visitcount"][value="${profile.visitCount}"]`);
+      if (vc) vc.checked = true;
+    }
+    updateCityField();
+    if (profile.cityKorea) {
+      if (Array.isArray(profile.cityKorea)) {
+        profile.cityKorea.forEach(v => {
+          const cb = document.querySelector(`input[name="city"][value="${v}"]`);
+          if (cb) cb.checked = true;
+        });
+      } else {
+        document.getElementById('f-city-single').value = profile.cityKorea;
+      }
+    }
     lockIdentityFields();
     document.getElementById('profile-submit').textContent = '저장하기 · Save';
     toggleArrivalField();
@@ -792,7 +862,40 @@ function toggleArrivalField() {
   const group = document.getElementById('arrival-group');
   group.style.maxHeight = inKorea ? '0' : '80px';
   group.style.opacity   = inKorea ? '0' : '1';
+  updateCityField();
 }
+
+function updateCityField() {
+  const inKorea = document.querySelector('input[name="in-korea"]:checked')?.value === 'yes';
+  const purpose = document.querySelector('input[name="purpose"]:checked')?.value;
+  const cityGroup   = document.getElementById('city-group');
+  const citySingle  = document.getElementById('f-city-single');
+  const cityTravel  = document.getElementById('f-city-travel');
+
+  if (!inKorea && !purpose) { cityGroup.style.display = 'none'; return; }
+
+  cityGroup.style.display = '';
+
+  if (purpose === 'travel') {
+    citySingle.style.display = 'none';
+    cityTravel.style.display = '';
+  } else {
+    citySingle.style.display = '';
+    cityTravel.style.display = 'none';
+  }
+}
+
+// Limit travel city checkboxes to 3
+document.addEventListener('change', e => {
+  if (e.target.name !== 'city') return;
+  const checked = document.querySelectorAll('input[name="city"]:checked');
+  if (checked.length > 3) e.target.checked = false;
+});
+
+// Update city field when purpose changes
+document.addEventListener('change', e => {
+  if (e.target.name === 'purpose') updateCityField();
+});
 
 function validateAndSave(e) {
   e.preventDefault();
@@ -808,6 +911,10 @@ function validateAndSave(e) {
   const inKorea     = inKoreaEl?.value === 'yes';
   const arrival     = document.getElementById('f-arrival').value;
   const purpose     = document.querySelector('input[name="purpose"]:checked')?.value;
+  const visitCount  = document.querySelector('input[name="visitcount"]:checked')?.value;
+  const citySingle  = document.getElementById('f-city-single').value;
+  const cityChecked = [...document.querySelectorAll('input[name="city"]:checked')].map(c => c.value);
+  const cityKorea   = purpose === 'travel' ? cityChecked : (citySingle || null);
 
   const setErr = (id, show) => {
     document.getElementById(id).style.display = show ? 'block' : 'none';
@@ -825,6 +932,7 @@ function validateAndSave(e) {
   setErr('err-in-korea',    !inKoreaEl);       if (!inKoreaEl) valid = false;
   setErr('err-arrival',     !inKorea && !arrival); if (!inKorea && !arrival) valid = false;
   setErr('err-purpose',     !purpose);         if (!purpose) valid = false;
+  setErr('err-visitcount',  !visitCount);      if (!visitCount) valid = false;
 
   if (!valid) return;
 
@@ -832,6 +940,8 @@ function validateAndSave(e) {
     email, name, gender, nationality, age, location, inKorea,
     plannedArrival: inKorea ? null : (arrival || null),
     purpose,
+    cityKorea: cityKorea || null,
+    visitCount: visitCount || null,
     clearedMissions: getLocalClearedMissions(),
     registeredAt: getUserProfile()?.registeredAt || new Date().toISOString(),
     updatedAt: new Date().toISOString()

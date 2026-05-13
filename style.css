@@ -924,6 +924,37 @@ button:active {
   color: var(--surface);
 }
 
+.form-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.checkbox-option:has(input:checked) {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--surface);
+}
+
+.checkbox-option input[type="checkbox"] {
+  display: none;
+}
+
 .form-divider {
   height: 1px;
   background: var(--border);
