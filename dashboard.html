@@ -124,6 +124,18 @@ h1 { font-size: 26px; font-weight: 700; }
       <h2>한국 거주 여부 × 미션 플레이 (현재 거주 vs 미거주)</h2>
       <canvas id="ch-inkorea-mission"></canvas>
     </div>
+    <div class="chart-card accent wide">
+      <h2>한국 내 도시별 사용자 분포 — 어느 도시에 외국인이 많나요?</h2>
+      <canvas id="ch-city"></canvas>
+    </div>
+    <div class="chart-card accent">
+      <h2>방문 횟수 분포 (처음 방문 vs 재방문)</h2>
+      <canvas id="ch-visitcount"></canvas>
+    </div>
+    <div class="chart-card accent">
+      <h2>TOPIK 수준 × 재플레이율 — 한국어 수준별 미션 재도전 횟수</h2>
+      <canvas id="ch-topik-retry"></canvas>
+    </div>
   </div>
 
   <!-- ── 행동 분석 ────────────────────────────────────────── -->
@@ -222,7 +234,7 @@ async function loadData() {
 
     renderProfiles(profiles);
     renderCrossProfileCharts(profiles);
-    renderDashboard(events);
+    renderDashboard(events, profiles);
   } catch (e) {
     showError('Firestore 오류 / Firestore error: ' + e.message +
       '. Firestore 보안 규칙에서 읽기 권한을 허용해 주세요 / Allow reads in Firestore security rules (테스트 모드 / test mode).');
@@ -432,9 +444,8 @@ function renderCrossProfileCharts(profiles) {
       },
     },
   });
-}
 
-  // ── TOPIK distribution ─────────────────────────────────
+  // ── Chart 3: TOPIK distribution ────────────────────────
   const TOPIK_LABELS = {
     topik0: '없음', topik1: '1급(초보)', topik2: '2급(초급)',
     topik3: '3급(대화)', topik4: '4급(중급)', topik5: '5급(고급)', topik6: '6급(최상위)',
@@ -461,10 +472,114 @@ function renderCrossProfileCharts(profiles) {
       scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { grid: { display: false } } },
     },
   });
+
+  // ── Chart 4: City distribution ─────────────────────────
+  // cityKorea is stored as string (work/study) or array (travel)
+  const cityCounts = {};
+  profiles.forEach(p => {
+    if (!p.cityKorea) return;
+    const cities = Array.isArray(p.cityKorea) ? p.cityKorea : [p.cityKorea];
+    cities.forEach(c => { if (c) cityCounts[c] = (cityCounts[c] || 0) + 1; });
+  });
+  const cityEntries = Object.entries(cityCounts).sort((a,b) => b[1]-a[1]).slice(0, 15);
+
+  if (cityEntries.length) {
+    new Chart(document.getElementById('ch-city'), {
+      type: 'bar',
+      data: {
+        labels: cityEntries.map(([c]) => c),
+        datasets: [{
+          label: '사용자 수',
+          data: cityEntries.map(([,v]) => v),
+          backgroundColor: cityEntries.map((_, i) => COLORS[i % COLORS.length]),
+          borderRadius: 6,
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.raw}명` } } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { grid: { display: false } } },
+      },
+    });
+  } else {
+    document.getElementById('ch-city').closest('.chart-card').querySelector('h2').insertAdjacentHTML(
+      'afterend', '<p style="color:#bbb;font-size:14px;padding:40px 0;text-align:center">도시 데이터가 아직 없습니다</p>'
+    );
+    document.getElementById('ch-city').style.display = 'none';
+  }
+
+  // ── Chart 5: Visit count distribution ─────────────────
+  const vcLabels = ['처음 방문 / First', '2-3회 방문 / 2-3 times', '4회 이상 / 4+ times'];
+  const vcKeys   = ['first', '2to3', '4plus'];
+  const vcCount  = { first: 0, '2to3': 0, '4plus': 0 };
+  profiles.forEach(p => { if (p.visitCount && vcCount[p.visitCount] !== undefined) vcCount[p.visitCount]++; });
+
+  new Chart(document.getElementById('ch-visitcount'), {
+    type: 'doughnut',
+    data: {
+      labels: vcLabels,
+      datasets: [{
+        data: vcKeys.map(k => vcCount[k]),
+        backgroundColor: ['#34c759', '#007aff', '#ff9500'],
+        borderWidth: 0,
+        hoverOffset: 8,
+      }],
+    },
+    options: {
+      responsive: true,
+      cutout: '60%',
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 14, font: { size: 12 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}명` } },
+      },
+    },
+  });
 }
 
-function renderDashboard(events) {
-  // ── Chart 3: inKorea × Mission ──────────────────────────
+function renderDashboard(events, profiles) {
+  // ── Chart: TOPIK × Retry ────────────────────────────────
+  // Build userId → topik map from profiles
+  const topikKeys2 = ['topik0','topik1','topik2','topik3','topik4','topik5','topik6'];
+  const TOPIK_LABELS2 = {
+    topik0: '없음', topik1: '1급', topik2: '2급',
+    topik3: '3급',  topik4: '4급', topik5: '5급', topik6: '6급',
+  };
+  const userTopikMap = {};
+  (profiles || []).forEach(p => {
+    if (!p.email || !p.topik) return;
+    const uid = btoa(p.email.toLowerCase().trim()).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+    userTopikMap[uid] = p.topik;
+  });
+  const topikRetryCount = {};
+  topikKeys2.forEach(k => topikRetryCount[k] = 0);
+  events.filter(e => e.eventType === 'mission_retry' && e.userId).forEach(e => {
+    const t = userTopikMap[e.userId];
+    if (t && topikRetryCount[t] !== undefined) topikRetryCount[t]++;
+  });
+
+  new Chart(document.getElementById('ch-topik-retry'), {
+    type: 'bar',
+    data: {
+      labels: topikKeys2.map(k => TOPIK_LABELS2[k]),
+      datasets: [{
+        label: '재플레이 횟수',
+        data: topikKeys2.map(k => topikRetryCount[k]),
+        backgroundColor: ['#c7c7cc','#5ac8fa','#34c759','#007aff','#ff9500','#af52de','#ff3b30'],
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.raw}회 재도전` } },
+      },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { grid: { display: false } } },
+    },
+  });
+
+  // ── Chart: inKorea × Mission ──────────────────────────
   const mInKorea = {}, mOutside = {};
   MISSION_ORDER.forEach(m => { mInKorea[m] = 0; mOutside[m] = 0; });
   events.filter(e => e.eventType === 'mission_start' && e.missionId).forEach(e => {
