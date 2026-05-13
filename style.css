@@ -578,6 +578,28 @@ button:active {
   transform: none;
 }
 
+#about-hud-btn {
+  padding: 7px 14px;
+  background: rgba(232, 25, 44, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(232, 25, 44, 0.35);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 50;
+  transition: all 0.15s ease;
+  width: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+#about-hud-btn:hover {
+  background: rgba(232, 25, 44, 0.35);
+  border-color: rgba(232, 25, 44, 0.65);
+}
+
 /* ===================================================================
    VOCABULARY SCREEN
    =================================================================== */
