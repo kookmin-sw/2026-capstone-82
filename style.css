@@ -987,8 +987,8 @@ button:active {
   align-items: center;
   gap: 7px;
   padding: 9px 18px;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(135deg, #FF6B6B, #E8192C);
+  border: none;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
@@ -997,13 +997,13 @@ button:active {
   cursor: pointer;
   width: auto;
   z-index: 20;
-  backdrop-filter: blur(8px);
+  box-shadow: 0 0 14px rgba(232, 25, 44, 0.55), 0 2px 8px rgba(232, 25, 44, 0.35);
   transition: all 0.18s ease;
   letter-spacing: 0.01em;
 }
 #about-btn:hover {
-  background: rgba(255, 255, 255, 0.20);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: linear-gradient(135deg, #FF8585, #FF2D44);
+  box-shadow: 0 0 24px rgba(232, 25, 44, 0.75), 0 4px 16px rgba(232, 25, 44, 0.5);
   transform: translateY(-1px);
 }
 
