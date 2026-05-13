@@ -511,7 +511,7 @@
 
         <!-- Korean city (shown when inKorea=yes OR purpose selected) -->
         <div class="form-group" id="city-group" style="display:none">
-          <label class="form-label" id="city-label">한국 내 도시 · City in Korea</label>
+          <label class="form-label" id="city-label">한국 내 도시 · City in Korea <span class="form-required">*</span></label>
           <!-- Single select: work / study -->
           <select class="form-select" id="f-city-single" style="max-width:220px; display:none">
             <option value="">도시 선택 / Select city</option>
@@ -542,6 +542,7 @@
               <label class="checkbox-option"><input type="checkbox" name="city" value="Other"> 기타 · Other</label>
             </div>
           </div>
+          <div class="profile-error-msg" id="err-city">도시를 선택해주세요 · Please select a city.</div>
         </div>
 
         <!-- Korea visit count -->
@@ -934,6 +935,16 @@ function validateAndSave(e) {
   setErr('err-purpose',     !purpose);         if (!purpose) valid = false;
   setErr('err-visitcount',  !visitCount);      if (!visitCount) valid = false;
 
+  // City is required when the city field is visible
+  const cityGroupVisible = document.getElementById('city-group').style.display !== 'none';
+  const cityMissing = cityGroupVisible && (
+    purpose === 'travel' ? cityChecked.length === 0 : !citySingle
+  );
+  if (document.getElementById('err-city')) {
+    document.getElementById('err-city').style.display = cityMissing ? 'block' : 'none';
+  }
+  if (cityMissing) valid = false;
+
   if (!valid) return;
 
   const data = {
@@ -949,6 +960,13 @@ function validateAndSave(e) {
 
   saveUserProfile(data);
   DB.saveProfile(data);
+  // Preserve city change history (arrayUnion — never overwrites existing entries)
+  if (data.cityKorea) {
+    DB.appendCityHistory(email, {
+      city: data.cityKorea,
+      changedAt: data.updatedAt,
+    });
+  }
   if (window.Analytics) Analytics.userRegistered();
   document.getElementById('profile-overlay').classList.remove('active');
   document.getElementById('profile-btn').style.display = 'flex';

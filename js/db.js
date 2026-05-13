@@ -42,9 +42,22 @@ const DB = (() => {
   async function saveProfile(profile) {
     if (!init()) return;
     try {
-      await db.collection('user_profiles').doc(docId(profile.email)).set(profile);
+      // merge:true preserves Firestore fields not in profile (e.g. cityHistory)
+      await db.collection('user_profiles').doc(docId(profile.email)).set(profile, { merge: true });
     } catch (e) {
       console.warn('[DB] saveProfile error:', e.message);
+    }
+  }
+
+  // Append city change to history without overwriting previous entries
+  async function appendCityHistory(email, cityEntry) {
+    if (!init()) return;
+    try {
+      await db.collection('user_profiles').doc(docId(email)).update({
+        cityHistory: firebase.firestore.FieldValue.arrayUnion(cityEntry),
+      });
+    } catch (e) {
+      console.warn('[DB] appendCityHistory error:', e.message);
     }
   }
 
@@ -71,5 +84,5 @@ const DB = (() => {
     }
   }
 
-  return { getProfile, saveProfile, logEvent, getEvents };
+  return { getProfile, saveProfile, appendCityHistory, logEvent, getEvents };
 })();
