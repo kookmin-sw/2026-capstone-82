@@ -2,7 +2,13 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<style>
+/* Game screen: body must never scroll — everything is position:fixed */
+html, body { overflow: hidden; height: 100%; overscroll-behavior: none; }
+/* iOS safe-area padding for notched phones (bottom home bar) */
+#game { padding-bottom: env(safe-area-inset-bottom); }
+</style>
 <title>Korea Life RPG — Mission</title>
 <link rel="icon" href="logo/favicon.png" type="image/png">
 <link rel="stylesheet" href="style.css">

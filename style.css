@@ -10,6 +10,16 @@
   padding: 0;
 }
 
+html {
+  overscroll-behavior: none;   /* prevent iOS/Android rubber-band bounce */
+  -webkit-text-size-adjust: 100%; /* prevent iOS font scaling on rotate */
+}
+
+/* touch-action: manipulation disables double-tap zoom on all buttons/links */
+a, button, [role="button"] {
+  touch-action: manipulation;
+}
+
 :root {
   --bg: #FAFAFA;
   --surface: #FFFFFF;
