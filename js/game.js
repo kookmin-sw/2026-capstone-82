@@ -25,7 +25,7 @@ let currentMission = null;
 let currentStepKey = 'start';
 let isTyping = false;
 let waitingForEnter = false;
-let missionDone = false;
+var missionDone = false;  // var so window.missionDone works in back-btn inline onclick
 
 // Scene-based callbacks
 let enterCallback = null;
